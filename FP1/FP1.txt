@@ -1,0 +1,43 @@
+SCOTUS Voting Records
+Andrew Phillips & Jake Rourke
+11.1.2017
+FP1
+
+Collaborator: Professor Maron Sorenson, Assistant Professor of Government
+
+Description: We are using the Supreme Court Database, published by Wash U (St.
+Louis). We are looking at the Justice-Centered data organized by legal
+provision, which includes a set of each justice's votes as well as the the legal
+issues and provisions in the case, in every case from 1956 to 2016. This data is
+especially interesting because it includes not just descriptive facts about the
+case, but also the direction that each justice voted in (conservative or
+liberal) given the issue, which can reveal information about the individual
+justices' beliefs. Additionally, a wealth of information can be gained from the
+63 variables in this dataset, which include chronological variables such as the
+date and chief justice, substantive variables about thecase such as the
+majority's opinion and direction and the issues at hand, outcome variables about
+the decision such as whether or not precedent was overruled, voting variables
+about the individual justice such as their own vote and whether or not it was in
+the majority, and background variables that are mostly comprised of citation and
+identification information.
+
+Brainstorm:
+  - Which justices tend to vote conservative or liberal? Is this affected by
+    issue area?
+  - Do certain chief justices promote unity more than others? How does the 
+    chief justice affect the number of votes in the majority or dissent?
+  - When are certain justices more likely to side with the majority vs. the 
+    minority opinion?
+  - Which justices have changed their voting patterns over the years - as in,
+    used to vote predominantly liberal or conservative, then flip-flopped?
+    Similarly, which justices seem to be politically impartial?
+  - What legal provisions are the most contentious?
+  - Where do the most cases come from? (either literally, as in geographic)
+    location, or as in what sort of dispute
+  - When did the court grant certiori to cases of certain issues? Either
+    by term or by chief justice
+  - When did the court predominantly lean conservative or liberal? In which
+    issue areas?
+  - Which issues have the most change (precedent is overruled) Is there a
+    relationship between amount of change and year, i.e. maybe during certain
+    social movements there was more overruling of precedent?
