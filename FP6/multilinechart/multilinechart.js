@@ -8,10 +8,6 @@ var NS = {}; // create namespace
 
 
 function aggregateData() {
-  // Transforms data, in NS.newData, so that it is an array of
-  // objects that contain the year, and every justice's mean decision, i.e.
-  // {year: 1946, Justice1: 1.3, Justice2: 2.1, etc.}
-
   NS.dataNested = d3.nest()
     // nest by justice
     .key(function(d) {return d.justiceName})
