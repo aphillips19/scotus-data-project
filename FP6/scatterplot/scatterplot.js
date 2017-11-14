@@ -12,7 +12,7 @@ NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_LegalProvision.csv"
 
 NS.width = 800;      // of SVG
 NS.height = 400;     // of SVG
-NS.padding = 30;
+NS.padding = 80;
 
 
 //////////////////////////////////////////////////////////////////////
@@ -127,6 +127,16 @@ function initialize() {
   });
 }
 
+function makeTitle(svg) {
+    svg.append("text")
+    .attr("x", NS.width / 2)
+    .attr("y", NS.padding / 2)
+    .attr("text-anchor", "middle")
+    .attr("class", "title")
+    .text("Court Decisions vs. Time");
+}
+
+
 function addHTML() {
   //document.write("<p>redraw data!</p>");
 }
@@ -134,6 +144,9 @@ function addHTML() {
 function makeScatterplot (svg) {
 
   console.log("make scatterplot");
+
+  // title
+  makeTitle(svg);
 
   // Add circles
   svg.selectAll(".series")

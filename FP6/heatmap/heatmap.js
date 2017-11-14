@@ -128,7 +128,7 @@ function heatmap(svg) {
   issueLabels = svg.selectAll(".issueLabel")
     .data(d3.keys(NS.issueAreas))
     .enter().append("text")
-      .text((d) => d)
+      .text((d) => +d + 1)
       .attr("x", (d, i) => i * NS.gridSize)
       .attr("y", 0)
       .style("text-anchor", "middle")
