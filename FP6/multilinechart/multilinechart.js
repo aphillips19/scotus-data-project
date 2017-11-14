@@ -3,63 +3,29 @@
 // Namespace
 var NS = {}; // create namespace
 
-	NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_LegalProvision.csv"
-//NS.datapath = "../../Data/SCDB_small.csv"
+  NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_LegalProvision.csv"
+  //NS.datapath = "../../Data/SCDB_small.csv"
 
 
 function aggregateData() {
-
-  // Goal: data that looks like
-  // YEAR JUSTICE1 JUSTICE2 JUSTICE3 JUSTICE4 ...
-  // 1990    1.2      1.4      1.1      1.8   ...
-  // if no value, maybe 0?
+  // Transforms data, in NS.newData, so that it is an array of
+  // objects that contain the year, and every justice's mean decision, i.e.
+  // {year: 1946, Justice1: 1.3, Justice2: 2.1, etc.}
 
   NS.dataNested = d3.nest()
-
-    // multi-level nest, by year then by case
+    // nest by justice
+    .key(function(d) {return d.justiceName})
+    // nest by year
     .key(function(d) {return (d.dateDecision.split("/")[2]); } )
-    .key(function(d) {return d.caseId})
-    
-    // all of the individual entries for each year will have the same decision
-    // direction, but rollup seems like the easiest way to move that data
-    // to the case- rather than justice- level, even though it is a more
-    // powerful tool than necessary.
-    .rollup(function(d) {return {
-        decisionDirection: d[0].decisionDirection,
-        dateDecision: d[0].dateDecision
-      }
+
+    // roll up mean votes
+    .rollup(function(v) {
+      return d3.mean(v, function(d) {
+                      return d.direction;
+                    })
     })
     .entries(NS.dataset);
 
-    NS.dataPCBY.forEach(function(year) {
-      year.c = 0; // conservative
-      year.l = 0; // liberal
-      year.u = 0; // unspecifiable
-      year.totalCases = 0;
-
-      year.values.forEach(function(c) {
-        
-        year.totalCases++;
-
-        if(c.value.decisionDirection == 1)
-          year.c++;
-        if(c.value.decisionDirection == 2)
-          year.l++;
-        else
-          year.u++;
-        });
-     });
-  
-  NS.seriesNames = ["c", "l", "u"]
-
-  NS.series = NS.seriesNames.map(function(series) {
-    return NS.dataPCBY.map(function(d) {
-      return {
-        year: +d.key,
-        val: d[series]
-      };
-    });
-  });
 
 }
 
@@ -70,6 +36,10 @@ function initialize() {
     NS.dataset = d;
     main();
   });
+}
+
+function main() {
+  aggregateData();
 }
 
 initialize();
