@@ -7,10 +7,14 @@
 </head>
 
 <body>
+  <a href="../index.html">Go Back</a>
   <p> Heatmap </p>
+  <p>Shows the direction of justice's average votes by issue area</p>
   <script type=text/javascript src=./heatmap.js></script>
   <div id=info>
-    <ol>
+  <p>Red = conservative, Blue = liberal, Purple = moderate<p>
+  <p>Issue Area numbers:</p>
+  <ol>
     <li> Criminal Procedure   </li>
     <li> Civil Rights         </li>
     <li> First Amendment      </li>
@@ -26,21 +30,13 @@
     <li> Miscellaneous        </li>
     <li> Private Action        </li>
   </ol>
-  <div class="fake-buttons">
-    <div>
-      <p>Justice Type</p>
-      <select name="Justice Type">
-        <option value="1">All Justices</option>
-        <option value="2">Chief Justice totals</option>
-      </select>
-    </div>
-    <div>
-      <p>Compare</p>
-      <select name="Compare">
-        <option value="1">All issue areas</option>
-        <option value="2">Legal provisions in A</option>
-      </select>
-    </div>
+  <div class="interactivity">
+    <h3>Proposed interactivity:</h3>
+    <ul>
+      <li>Choose an individual issue area</li>
+      <li>Add or remove justices to compare</li>
+      <li>Look at majority/minority rather than conservative/liberal</li>
+    </ul>
   </div>
 </body>
 

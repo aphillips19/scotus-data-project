@@ -1,6 +1,12 @@
+.interactivity {
+  width: 800px;
+}
 
-
-
+#brush {
+  background: lightgrey;
+  width: 960px;
+  height: 50px;
+}
 
 .axis--x path {
   display: none;

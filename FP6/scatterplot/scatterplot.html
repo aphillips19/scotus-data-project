@@ -7,31 +7,19 @@
 </head>
 
 <body>
+  <a href="../index.html">Go Back</a>
   <p> Scatterplot </p>
+  <p>Shows the number of conservative/liberal/unspecifiable decisions per year (at the case level)</p>
   <script type="text/javascript" src="./scatterplot.js"></script>
-  <div class="fake-buttons">
-    <div>
-      <p>Individual Justice</p>
-      <select name="Individual Justice">
-        <optgroup label = "Individual Justice">
-        <option value="HHBurton">HHBurton</option>
-        <option value="RHJackson">RHJackson</option>
-        <option value="WODouglas">WODouglas</option>
-        <option value="FFrankfurter">FFrankfurter</option>
-      </optgroup>
-      </select>
-    </div>
-    <div>
-      <p>Individual Issue Area</p>
-      <select name="Individual Issue Area">
-        <optgroup label ="Individual Issue">
-        <option value="1">Criminal Procedure</option>
-        <option value="2">Civil Rights</option>
-        <option value="3">First Amendment</option>
-        <option value="4">Due Process</option>
-      </optgroup>
-      </select>
-    </div>
+  <div>
+    <p>Blue = liberal decision, Red = conservative decision, Grey = unspecified descision</p>
+  </div>
+  <div class="interactivity">
+    <h3>Proposed interactivity:</h3>
+    <ul>
+      <li> Choose an individual issue are </li>
+      <li> See an individual justice's votes rather than, or versus, the court's decisions </li>
+    </ul>
   </div>
 </body>
 

@@ -138,6 +138,13 @@ function heatmap(svg) {
 
   cards.append("title");
 
+  function filterColors(dir) {
+    if(dir > 0)
+      return colorScale(dir);
+    else
+      return "#FFFFFF";
+  }
+
   cards.enter().append("rect")
       .attr("x", function(d) {
         return d.issueArea * NS.gridSize;
@@ -151,7 +158,7 @@ function heatmap(svg) {
       .attr("width", NS.gridSize)
       .attr("height", NS.gridHeight)
       .style("fill", function(d) {
-        return colorScale(d.direction);
+        return filterColors(d.direction);
       });
 
       legend = svg.selectAll(".legend")
