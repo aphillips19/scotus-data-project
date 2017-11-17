@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Jake Rourke and Andrew Phillips
+	FP3  -->
+<head>
+  <meta charset="utf-8">
+  <title>FP8</title>
+
+</head>
+
+<body>
+
+<p>
+Final Project Assignment 8 <br>
+Supreme Court Data Project <br>
+Andrew Phillips and Jake Rourke <br>
+11/17/17 <br> <br>
+
+<ul>
+  <li> The data set we are working with has 65535 instances each with 61 attributes. </li>
+  <li> Each data point represents one vote by a particular justice </li>
+  <li> NOTE: we also have the ability to work with case-based data set rather than vote-based </li>
+</ul>
+
+<br> 
+
+Here is a full list of the 61 attributes: <br> <br>
+
+"caseId","docketId","caseIssuesId","voteId","dateDecision","decisionType","usCite","sctCite","ledCite","lexisCite","term", <br>
+"naturalCourt","chief","docket","caseName","dateArgument","dateRearg","petitioner","petitionerState","respondent","respondentState", <br>
+"jurisdiction","adminAction","adminActionState","threeJudgeFdc","caseOrigin","caseOriginState","caseSource","caseSourceState", <br>
+"lcDisagreement","certReason","lcDisposition","lcDispositionDirection","declarationUncon","caseDisposition","caseDispositionUnusual", <br>
+"partyWinning","precedentAlteration","voteUnclear","issue","issueArea","decisionDirection","decisionDirectionDissent", <br>
+"authorityDecision1","authorityDecision2","lawType","lawSupp","lawMinor","majOpinWriter","majOpinAssigner","splitVote","majVotes", <br>
+"minVotes","justice","justiceName","vote","opinion","direction","majority","firstAgreement","secondAgreement" <br> <br>
+
+Here is an small example of what the data that is most useful to us would look like: <br> <br>
+
+caseId,dateDecision,caseName,issueArea,justiceName <br>
+1946-001,11/18/1946,HALLIBURTON OIL WELL CEMENTING CO. v. WALKER et al., DOING BUSINESS AS DEPTHOGRAPH CO.,8,HHBurton <br>
+1959-094,6/13/1960,PENNSYLVANIA RAILROAD CO. v. UNITED STATES,9,HLBlack <br>
+1965-133,6/20/1966,GEORGIA v. RACHEL et al.,9,JHarlan2 <br> <br>
+
+
+<ul>
+  <li> Case ID - a distinct identifier for each case </li>
+  <li> Decision date -  MM/DD/YYYY - All cases since 1946 </li>
+  <li> Case name - Will be the same most of the time for at least 9 lines consecutively (9 justice votes per case)</li>
+  <li> issueArea - Numeric value representing a category for the issue [1,14] </li>
+  <li> justiceName - Name of justice voting in this instance </li>
+
+</ul>
+
+For more information on the attributes like the issue area, this codebook can be used: <br>
+<a href="http://scdb.wustl.edu/_brickFiles/2017_01/SCDB_2017_01_codebook.pdf">http://scdb.wustl.edu/_brickFiles/2017_01/SCDB_2017_01_codebook.pdf</a> <br> <br>
+
+</p>
+
+
+</body>
+</html>
