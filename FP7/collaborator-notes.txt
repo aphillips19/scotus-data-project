@@ -1,0 +1,45 @@
+Andrew Phillips & Jake Rourke
+FP7 Notes
+11.18.2017
+
+
+Overall
+- Really likes the scatterplot, line chart, and heatmap visualizations. Plans to use them in her Judicial Politics class
+- Not as big a fan of the pie chart, but agrees that it is useful for a big-picture analysis
+- When we brought up the idea of also looking at majority-minority data, she liked the idea and had some thoughts about it
+
+Pie chart
+- Thinks it's not incredibly interesting
+- Would like to be able to filter by chief justice, to see how they change over time
+  - expect that in the 60’s and 70’s, we will see more civil rights cases
+
+Scatterplot
+- Really likes how it shows when the court is conservative or liberal, and how it has leaned predominantly conservative in the modern era
+- "unspecifiable" decision data is ignored in this field; remove those grey dots from the graph
+- Add a button to toggle between percent vs. raw number
+- Switch to case centered data set, because at the moment some cases are counted multiple times when there are multiple decisions associated with each case
+
+Line chart
+- Change the scale to 0=conservative, 1=liberal
+- Really likes the ideas of being able to select individual justices to highlight, and to zoom in/out based on chief justice/year
+- Have broad categories of justices that can be selected, in addition to individual ones
+- Be able to look at swing justices - Sorenson will send us this data by Monday
+    - When a justice is the swing vote, THEIR line for that period is highlighted or otherwise brought to attention
+    - Be able to see if their voting behavior change when they became the swing vote
+
+Heatmap
+- In addition to individual issue areas, have a view with civil liberties cases lumped together (first 6 issue areas)
+  - Could either have an "other" category, or use the decision direction classifications in the codebook for other aggregate categories
+- Add a way to see the actual number of decisions and the mean associated with the color, maybe on hover
+
+Majority-Minority ideas
+- Could look at the percent that an individual justice is in the majority
+    - Broken down by issue area
+- If liberals are in the minority, it’s more interesting to look at the liberals and see when they’re voting WITH the conservatives
+    - Party of the median is the de facto majority
+    - Will use the swing vote dummy variable (as used in the line chart)
+- Especially interested Unanimous vs. 5-4 cases
+  - When looking at how often a justice is in the majority, break down by 9-0 vs. 5-4
+  - Showing when their vote matters individually - swing vote
+  - Did not have a specific suggestion on how to show this, but thinks we could find a way
+
