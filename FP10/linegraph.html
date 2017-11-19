@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FP10: Line Grapht</title>
+<body>
+<div class="heading">
+  <h3>FP10: Define Your Goals</h3>
+  <p> Supreme Court Justice Data Project <br>
+    Andrew Phillips &amp; Jake Rourke <br> 
+    11.20.2017 <br> </p>
+</div>
+<div class="writeup">
+  <h3>Multi-Series Line Graph</h3>
+  <p>Questions that can be answered:</p>
+  <ul>
+    <li>Which justices votes predominantly liberal or conservative?</li>
+    <li>How do justices' votes change over time?</li>
+    <li>Were certain court eras (chief justice reigns) more liberal or conservative?</li>
+    <li>Does being the swing vote affect a justice's voting behavior?</li>
+  </ul>
+  <p>Sketch</p>
+  <p>Implemented Interactions</p>
+  <ul>
+    <li>Change the time span by clicking on a chief justice (adjust graph axes)</li>
+    <li>Select which justices are shown and fade the others (either individually or in broader groups) to make it easier to see individual justices amongst the clutter</li>
+    <li>Toggle "swing votes", which will highlight (and/or increase the stroke size of) a justice's line during the periods of time in which they are the swing vote.</li>
+    <li>Hover over a justice's line to see their number of decisions as well as thexact conservative/liberal value, in a given year</li>
+  </ul>
+  <p>Concrete example:</p>
+  <ul>
+    <li>The user will initially be presented with the line chart that has all of the justices selected, and swing votes deselected, for the entire time frame</li>
+    <li>If the user selects one of the justice groupings, all the justices will ade out except for the ones in that group<li>
+    <li>Instead of using the groupings, if the user selects individual justices, those selected justices will be shown clearly and the deselected ones will be faded</li>
+    <li>When the user clicks on a chief justice, the graph will zoom in to the period of time in which they served as chief justice. Ideally, the graph of chief justices will zoom in accordingly, but it might just be a group of buttons</li>
+    <li>When "swing vote" is checked, the graph will update so that during the period of time where a justice was a swing vote, their line is highlighted/thickened</li>
+  </ul>
+  <p>Proposed impementation path:</p>
+  <ul>
+    <li>Start with the multi-series line graph we already have</li>
+    <li>Hard-code the data for chief justice years in that position</li>
+    <li>Add the timeframe-changing functionality by adapting code from a <a href="https://bl.ocks.org/mbostock/34f08d5e11952a80609169b7917d4172">brush-and-zoom graph</a></li>
+    <li>Adding the checkbox functionality (already started in the prototype)</li>
+    <li>Create groupings of justices, and implement checkbox functionality</li>
+    <li>With the swing vote data from sorenson, use <a href="http://www.d3noob.org/2015/07/clipped-paths-in-d3js-aka-clippath.html">clipped paths</a> to highlight the area where there is a swing vote present</li>
+  </ul>
+</div>
+</body>
+</html>

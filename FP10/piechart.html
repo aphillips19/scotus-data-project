@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FP10: Donut Chart</title>
+<body>
+<div class="heading">
+  <h3>FP10: Define Your Goals</h3>
+  <p> Supreme Court Justice Data Project <br>
+    Andrew Phillips &amp; Jake Rourke <br> 
+    11.20.2017 <br> </p>
+</div>
+<div class="writeup">
+  <h3>Scatterplot</h3>
+  <p>Questions that can be answered:</p>
+  <ul>
+    <li>In which issue areas does the court decide cases?</li>
+    <li>Does this change depending on the chief justice?</li>
+    <li>Does this change depending on year year (i.e. in the civil rights
+        era?</li>
+  </ul>
+  <p>Sketch</p>
+  <p>Implemented Interactions</p>
+  <ul>
+    <li>Choose a start and end date </li>
+    <li>Choose a chief justice, in which case the start and end date will be filled in to the date range of their term</li>
+    <li>Hover to see the # cases and the percent</li>
+  </ul>
+  <p>Concrete example:</p>
+  <ul>
+    <li>The user will initially be presented with the pie chart for all the cases in the dataset (1946-2016). They will then either change the start and end year manually, or choose a chief justice which will change those dates automatically. If they wish to see the actual number of cases, or the percent of the total, they can hover over one of the sections.</li>
+  </ul>
+  <p>Proposed impementation path:</p>
+  <ul>
+    <li>Start with the pie chart we have already made for the prototypes</li>
+    <li>Change it into a donut chart using mbostock's code</li>
+    <li>Group data by year, by issue area</li>
+    <li>Hardcode date ranges of chief justices (information either from dataset or online sources</li>
+    <li>Implement changing the pie chart based on date range</li>
+    <li>Format labels and the total number of cases inside the chart</li>
+  </ul>
+</div>
+</ul>
+</div>
+</body>
+</html>
