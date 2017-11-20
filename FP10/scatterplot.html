@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>FP10: Donut Chart</title>
+<title>FP10: Scatterplot</title>
 <body>
 <div class="heading">
   <h3>FP10: Define Your Goals</h3>
@@ -15,16 +15,19 @@
   <ul>
     <li>When has the court predominantly lean liberal or conservative?</li>
     <li>When has the court taken on the most cases?</li>
+    <li>Does the above differ by issue area? </li>
   </ul>
   <p>Sketch</p>
   <img src="img/scatterplot.png" alt="scatterplot sketch" height="400" width="600">
   <p>Implemented Interactions</p>
   <ul>
     <li>Toggle between total number of cases in a year vs. percent of cases in a year</li>
+    <li>Change the issue area</li>
   </ul>
   <p>Concrete example:</p>
   <ul>
     <li>The user will view the graph, and then toggle between the two views if they feel so inclined</li>
+    <li>The user can select either the court's entire history, or only view cases that were decided within a certain issue area</li>
   </ul>
   <p>Proposed impementation path:</p>
   <ul>
@@ -32,6 +35,7 @@
     <li>Remove the grey "unspecified" dots from the graph</li>
     <li>Use the existing number aggregate data to create more data points for the percentage, not just number, of conservative/liberal cases</li>
     <li>Add the functionality to switch between the two views</li>
+    <li>Implement switching issue areas</li>
   </ul>
 </div>
 </body>
