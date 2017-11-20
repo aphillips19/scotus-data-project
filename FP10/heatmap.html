@@ -14,21 +14,28 @@
   <p>Questions that can be answered:</p>
   <ul>
     <li>Do justices vote differently depending on issue area?</li>
-    <li>
+    <li>Do justices vote in the majority/minority more than others? </li>
+    <li>Do justices vote in the majority/minority more based on certain issue areas? </li>
   </ul>
   <p>Sketch</p>
   <p>Implemented Interactions</p>
   <ul>
     <li>Switch between all different issue areas, or Civil Liberties vs. Non-Civil Liberties</li>
-    <li>Show a breakdown of # conservative votes, # liberal votes, and percent of times in the majority or minority, in different ways: When hovering over a justices name, show this info for all of his decisions (across issue areas). When hovering over an individual box, show this info for that justice in that issue area. When hovering over an issue area, show this info for all decisions (accross justices)</li>
+    <li>Show a breakdown of # conservative votes, # liberal votes, and percent of times in the majority or minority, in different ways: When hovering over a justices name, show this info for all of his decisions (across issue areas). When hovering over an individual box, show this info for that justice in that issue area. </li>
   </ul>
   <p>Concrete example:</p>
   <ul>
-    <li>The </li>
+    <li>The user will be presented with a heat map that shows how each justice voted in each issue area. </li>
+    <li>If the user hovers over a justice name, a pie chart will show the breakdown of majority/minority votes over all issue areas for this justice</li>
+    <li> The user can also hover over a specific box in the heat map to show the breakdown of majority/minority votes for this justice only in this issue area</li>
+    <li> A button will also allow the user to cluster the issue areas into two different catagories, civil liberties and other (appearently useful).</li>
   </ul>
   <p>Proposed impementation path:</p>
   <ul>
-    <li>Start with the scatterplot we already have</li>
+    <li>Start with the heatmap we already have</li>
+    <li>Group the data for button functionality (Civil liberties vs not) </li>
+    <li>Implement button functionality (using the grouped data)</li>
+    <li>Implement hover functionality/pie chart if possible with code we already have </li>
   </ul>
 </div>
 </body>
