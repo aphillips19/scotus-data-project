@@ -26,7 +26,7 @@
   <p> View 2 shows swing votes disabled, 3 justices checked, and the time frame of one chief justice</p>
   <p>Implemented Interactions</p>
   <ul>
-    <li>Change the time span by clicking on a chief justice (adjust graph axes)</li>
+    <li>Change the time span with the timeline below the graph (either through drag-selecting an area, or by clicking on a justice)</li>
     <li>Select which justices are shown and fade the others (either individually or in broader groups) to make it easier to see individual justices amongst the clutter</li>
     <li>Toggle "swing votes", which will highlight (and/or increase the stroke size of) a justice's line during the periods of time in which they are the swing vote.</li>
     <li>Hover over a justice's line to see their number of decisions as well as thexact conservative/liberal value, in a given year</li>
@@ -36,7 +36,7 @@
     <li>The user will initially be presented with the line chart that has all of the justices selected, and swing votes deselected, for the entire time frame</li>
     <li>If the user selects one of the justice groupings, all the justices will ade out except for the ones in that group<li>
     <li>Instead of using the groupings, if the user selects individual justices, those selected justices will be shown clearly and the deselected ones will be faded</li>
-    <li>When the user clicks on a chief justice, the graph will zoom in to the period of time in which they served as chief justice. Ideally, the graph of chief justices will zoom in accordingly, but it might just be a group of buttons</li>
+    <li>The user can change the time frame by clicking and dragging on the timeline with chief justices below the graph. Ideally, they will also be able to click on one chief justice in order to zoom in to only their time frame. When they have changed the timeframe, the graph will zoom in on the x axis accordingly, showing only that timeframe.</li>
     <li>When "swing vote" is checked, the graph will update so that during the period of time where a justice was a swing vote, their line is highlighted/thickened</li>
   </ul>
   <p>Proposed impementation path:</p>

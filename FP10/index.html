@@ -10,13 +10,93 @@
   <p> Supreme Court Justice Data Project <br>
     Andrew Phillips &amp; Jake Rourke <br> 
     11.20.2017 <br> </p>
-  <h3>Visualizations</h3>
+  
+    <h3>Visualizations</h3>
   <ul>
     <li><a href="linegraph.html">Multi-series Line Graph</a></li>
     <li><a href="heatmap.html">Heatmap</a></li>
     <li><a href=donutchart.html>Donut Chart</a></li>
     <li><a href="scatterplot.html">Scatterplot</a></li>
   </ul>
+
+  <h3>Potential Roadblocks</h3>
+  <ul>
+    <li>Line Graph:</li>
+    <ul>
+      <li>The labels on the line graph will be difficult to manage. As seen in the sketch of view 2, the labels can't just zoom along with hte graph, because they will be cut off. We will need to find a way to make sure that if a line is visible, its label is always visible, too.</li>
+      <li>Our idea of selecting supreme court justices may be better achieved by a group of buttons rather than a line graph. It's hard to say at the moment if one method will be harder, or more possible, than the other</li>
+      <li>Using clipping paths may prove difficult because there are so many different lines to contend with; in the mbostock example, there is only one path that is clipped</li>
+      <li>We have not yet seen the data that sorenson will provide for the justice swing votes, so are unsure whether or not it will create issues</li>
+    </ul>
+    <li>Heatmap:</li>
+    <ul>
+      <li>Creating the hover for the pie chart may be more difficult than anticipated. Just showing information in a tooltip is a backup plan, should the pie chart fail</li>
+      <li>Managing the transitions between so many boxes in the heatmap, and datapoints for the pie chart, may prove difficult. It might be necessary to simply create and remove an SVG every time there is an update rather than creating smoother update functions</li>
+    </ul>
+  </ul>
+  
+  <h3>Timeline</h3>
+  <p>Week 1 (thanksgiving break):</p>
+  <ul>
+    <li>Line Graph</li>
+    <ul>
+      <li>Get swing vote data from Sorenson, figure out if any changes need to be made</li>
+      <li>Implement zooming functionality</li>
+    </ul>
+    <li>Heatmap</li>
+    <ul>
+      <li>Aggregate data for the civil liberties vs. other view, using d3.nest</li>
+      <li>Implement switching between the two views</li>
+    </ul>
+  </ul>
+  <p>Week 2 (11/26-12/2):</p>
+  <ul>
+    <li>Line Graph</li>
+    <ul>
+      <li>Implement swing vote functionality</li>
+    </ul>
+    <li>Heatmap</li>
+    <ul>
+      <li>Add a static pie chart (and breakdown visualization) to the visualization</li>
+      <li>Make the breakdown info/pie chart change on hover</li>
+    </ul>
+  </ul>
+  <p>Week 3 (12/3-12/9):</p>
+  <ul>
+    <li>Line Graph</li>
+    <ul>
+      <li>Implement selecting different justices and justice groups</li>
+      <li>Make sure labels are properly formatted and visible whenever necessary</li>
+      <li>Make sure the visualization is user-friendly</li>
+    </ul>
+    <li>Heatmap</li>
+    <ul>
+      <li>Address problems that have arisen during the last two weeks</li>
+    </ul>
+    <li>Scatterplot</li>
+    <ul>
+      <li>Make small changes necessary to transform the prototype into a usable visualization</li>
+      <ul>
+        <li>Remove grey dots ("unspecifiable" data points)</li>
+        <li>Show actual information on hover via a tooltip</li>
+        <li>Implement switching between percentage and actual numbers</li>
+      </ul>
+    </ul>
+    <li>Donut Chart</li>
+    <ul>
+      <li>Transform the existing pie chart into a donut chart</li>
+      <ul>
+        <li>Import data on chief justice time frames from the line graph</li>
+        <li>Update graph based on selected years</li>
+      </ul>
+    </ul>
+  </ul>
+  <p>Week 4 (12/10-presentations):</p>
+  <ul>
+    <li>Continue working on the pie chart and scatterplot if necessary</li>
+    <li>Clean up the code, make sure everything is commented properly</li>
+    <li>Make sure everything looks good when put together, buttons/fonts/colors are consistant, etc.</li>
+    <li>Prepare for presentations</li>
 
 </div>
 </body>
