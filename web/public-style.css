@@ -1,0 +1,30 @@
+body {
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  border: 1px;
+}
+
+.heading {
+	padding: 20px;
+	line-height: 8px;
+}
+
+.project-description {
+  padding: 20px;
+  max-width: 600px;
+  font-family: sans-serif;
+}
+.header h3 {
+  padding: 10px;
+  background: lightblue;
+  border-radius: 5px;
+  width: 200px;
+  margin: 0 auto;
+  text-align: center;
+}
+.content {
+  text-align: center;
+}
