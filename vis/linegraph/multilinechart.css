@@ -2,12 +2,11 @@
   width: 800px;
 }
 
-
 .axis--x path {
   display: none;
 }
 
-.line {
+.justice--line, .justice--line-swing {
   fill: none;
   stroke: steelblue;
   stroke-width: 1.5px;
@@ -17,4 +16,10 @@
   cursor: move;
   fill: none;
   pointer-events: all;
+}
 
+.brush .selection {
+  fill: white;
+  fill-opacity: .3;
+  shape-rendering: crispEdges;
+}
