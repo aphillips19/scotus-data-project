@@ -43,3 +43,8 @@
   text-align: left;
   border: 1px solid black;
 }
+
+#justice-menu {
+  height: 200px;
+  overflow-y: scroll;
+}

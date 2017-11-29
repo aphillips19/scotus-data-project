@@ -1,4 +1,10 @@
 // Namespace
+//
+//
+// tooltip/tutorial: https://introjs.com/
+//
+//
+//
 var NS = {}; // create namespace
 
   //NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_Legagraphion.csv"
@@ -411,19 +417,46 @@ function updateSwingVotes(justice) {
       return NS.y(d.value.mean)
     });
 }
-
 function justiceMenu() {
-  var justiceMenu = d3.select(".justice-menu-svg")
-  
+  var div = d3.select("#justice-menu");
+  var justiceMenu = div.append("svg")
+    .attr("height", "500")
+    .attr("width", function() {
+      var w = div.style("width");// get the width of the div from the CSS styling
+      return +w.substring(0, w.length - 2) // remove the "px"
+    });
+
+
+  var menuSettings = {
+    margin: {top: 2, bottom: 2, left: 5},
+    fontSize: 10,
+    lineSpacing: 18,
+    squareSize: 10,
+    xSpacing: 4,
+  };
+
+
   var jmo = justiceMenu.selectAll(".justice-menu-option") // Justice Menu Option
     .data(NS.dataNested)
-    .enter().append()
-    .append("g")
-    .attr("class", ".justice-menu-option");
+    .enter().append("g")
+    .attr("class", "justice-menu-option")
 
-  jmu.append("text")
+  jmo.append("rect")
+    .attr("width", menuSettings.squareSize)
+    .attr("height", menuSettings.squareSize)
+    .attr("fill", function(d) {
+      return NS.z(d.key)
+    })
+    .attr("stroke", "black")
+    .attr("stroke-width", "1px")
+    .attr("y", function(d, i) { return i * menuSettings.lineSpacing; });
 
 
+  jmo.append("text")
+    .text(function(d) { return d.key; })
+    .attr("x", 20)
+    .style("font", "10px sans-serif")
+    .attr("y", function(d, i) { return i * menuSettings.lineSpacing })
 
 }
 
@@ -439,6 +472,7 @@ function main() {
   createGraph();
   eventListeners();
   setupSwingVotes();
+  justiceMenu();
 }
 
 
