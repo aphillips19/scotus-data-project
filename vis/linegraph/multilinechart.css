@@ -23,3 +23,23 @@
   fill-opacity: .3;
   shape-rendering: crispEdges;
 }
+
+.visualization {
+  width: 1200px;
+  padding: 10px;
+}
+
+.graph {
+  float: left;
+  width: 850px;
+}
+
+.controls {
+  float: left;
+
+  width: 150px;
+  height: 500px;
+  
+  text-align: left;
+  border: 1px solid black;
+}

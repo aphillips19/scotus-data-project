@@ -164,8 +164,7 @@ function createGraph() {
   NS.justice = NS.focus.selectAll(".justice")
     .data(NS.dataNested)
     .enter().append("g")
-      .attr("class", "justice")
-      .attr("id", function(d) { return d.key; });
+      .attr("class", "justice");
 
   // Add lines for each justice
   NS.justice.append("path")
@@ -200,6 +199,7 @@ function createGraph() {
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + NS.height2 + ")")
     .call(NS.xAxis2);
+
 
   NS.timeline = NS.context.selectAll(".timeline-entry")
     .data(NS.chiefJustices)
@@ -251,7 +251,7 @@ function createGraph() {
 }
 
 function fade (c, j) {
-    var shownJustices = ["JPStevens", "DHSouter", "SDOConnor", "WHRehnquist", "HHBurton"];
+    var shownJustices = ["JPStevens", "DHSouter", "SDOConnor", "WHRehnquist", "BRWhite"];
     if(shownJustices.includes(j)) {
       return c;
     } else {
@@ -292,63 +292,93 @@ function multipleConsecutiveRanges(values, valueof) {
   }
 }
 
-function setupSwingVotes() {
-
-  // Mark years where a justice was the swing vote with dots on graph
-  NS.justice.append("g")
-    .attr("class", "justice--swing")
-    .attr("id", function(d) {
-      return this.parentNode.key;
-    })
-
-  NS.justice.select(".justice--swing")
-    .selectAll(".justice--swing-circle")
-    .data(function(d, i) {
-      return NS.dataNested[i].values;
-    })
-    .enter()
-    // filter only swing vote years, only for shown justices
-    .filter(function(d) { return d.value.swing == 1; })
-    .append("circle")
-    .attr("class", "justice--swing-circle")
-    .attr("visibility", "visible")
-    .attr("r", "4")
-
-    .attr("fill", function(d) {
-      var id = this.parentNode.parentNode.id;
-      return fade("black", id);
-    })
-    .attr("stroke-width", "2")
-    .attr("stroke", function(d) {
-      var id = this.parentNode.parentNode.id;
-      return fade(NS.z(id), id);
-    })
-    .attr("cx", function(d, i) {
-      return NS.x(d.key)
-    })
-    .attr("cy", function(d) {
-      return NS.y(d.value.mean)
-    })
-    // Hide by default
-    .attr("visibility", "hidden");
-}
-
 function toggleSwingVotes() {
-  var circles = NS.justice.select(".justice--swing")
-    .selectAll(".justice--swing-circle");
+
+  /* create a new map containing median justice information with the structure:
+    // a justice who was a median justice at some point
+    0: {
+        key: justiceName
+        value: [start, end]
+      }
+    // a justice who was never a median justice
+    1: {
+        key: justiceName
+        value: [0, 0]
+    }
+  */
+
+
+  NS.dataSwingVotes = NS.dataNested.map(function(d) {
+    
+    var values =
+    multipleConsecutiveRanges(d.values, function(v) {
+      if(v.value.swing == 1) {
+        return +v.key;
+      }
+    });
+    /*
+    if((typeof daterange[0]) == "undefined") // if never a swing justice,
+                                         // replace undefined with 0
+      daterange = [0, 0];
+*/
+    return {
+      key: d.key,
+      values: values
+    };
+
+  });
+
+  /*
+
+  // https://bl.ocks.org/mbostock/4062844
+
+  // For every justice, make a rectangle that is the height of the graph and 
+  // the width of their (where applicable) tenure as the median justice. Use
+  // the class "clip" and the id "clip-[d.key]", i.e. clip-HLBlack
+  // If they never were a medianJJ, just make the rectangle have a width of 0
+
+  NS.svg.select("defs").selectAll("clipPath")
+    .data(NS.dataSwingVotes)
+    .enter().append("clipPath")
+    .attr("id", function(d) {
+        return "clip-" + d.key;
+    })
+    .append("rect")
+      //set x to the start of their tenure
+      .attr("x", function(d) {
+        console.log(d.key + ": " + "[" + d.value[0] + "," + d.value[1] + "]");
+        return NS.x(d.value[0]);
+      })
+      // set the width to the length of their tenure
+      .attr("width", function(d) {
+        return NS.x(d.value[1]) - NS.x(d.value[0]);
+      })
+      //.attr("width", NS.width)
+      .attr("height", NS.height);
+
+  // Add a second set of lines for each justice
+  NS.justice.append("path")
+    .attr("class", "justice--line-swing")
+    .attr("d", function(d) { return NS.line(d.values); })
+    .style("stroke", function(d) {
+      return fade(NS.z(d.key), d.key);
+    })
+    .style("stroke-width", 5)
+    .attr("clip-path", function(d) { return "url(#clip-" + d.key + ")"; })
+
+  // Clip each justice's line-swing
+  // with their rectangle of the corresponding name.
   
-  if(circles.attr("visibility") == "visible")
-    circles.attr("visibility", "hidden");
-  else
-    circles.attr("visibility", "visible");
+*/
+
 }
 
 function eventListeners() {
   console.log("listening...");
-  NS.focus.selectAll(".justice")
+  NS.focus.selectAll("path")
     .on("mouseover", function () {
-      //if(d3.select(this).attr("class") == "justice--swing-circle")
-        lineMouseOver(this);
+      if(d3.select(this).attr("class") == "justice--line")
+        lineMouseOver(this.parentNode);
     })
 }
 
@@ -396,36 +426,8 @@ function updateJustices() {
       }
       return "translate(" + x + "," + NS.y(d.value.value.mean) + ")";
     });
-
-  // update swing votes, if necessary
-  // if...
-  updateSwingVotes(justice);
 }
 
-function updateSwingVotes(justice) {
-  justice.selectAll("circle")
-    .attr("cx", function(d, i) {
-      return NS.x(d.key)
-    })
-    .attr("cy", function(d) {
-      return NS.y(d.value.mean)
-    });
-}
-
-function justiceMenu() {
-  var justiceMenu = d3.select(".justice-menu-svg")
-  
-  var jmo = justiceMenu.selectAll(".justice-menu-option") // Justice Menu Option
-    .data(NS.dataNested)
-    .enter().append()
-    .append("g")
-    .attr("class", ".justice-menu-option");
-
-  jmu.append("text")
-
-
-
-}
 
 function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
@@ -438,7 +440,7 @@ function main() {
   aggregateData();
   createGraph();
   eventListeners();
-  setupSwingVotes();
+  toggleSwingVotes();
 }
 
 

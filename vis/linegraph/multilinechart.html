@@ -11,8 +11,17 @@
   <a href="../index.html">Go Back</a>
   <p> Multi-Series Line Chart </p>
   <p> Graphs the mean decision direction for each justice in each year. 1 = conservative and 2 = liberal.</p>
-
-  <svg width="960" height="500"></svg>
+  <div class="visualization">
+    <div class="graph">
+      <svg width="850" height="500"></svg>
+    </div>
+    <div class="controls">
+      <button onclick="toggleSwingVotes()">Toggle swing votes</button>
+      <div id="justice-menu">
+        <!-- js file will add an svg here -->
+      </div>
+    </div>
+  </div>
   <script type="text/javascript" src="./multilinechart.js"></script>
 </body>
 
