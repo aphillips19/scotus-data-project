@@ -87,6 +87,14 @@ function aggregateData() {
     })
   })
 
+  splitData = []
+
+  NS.dataGood.forEach(function (d) {
+    console.log(d.justiceName)
+
+  })
+
+
 }
 
 
