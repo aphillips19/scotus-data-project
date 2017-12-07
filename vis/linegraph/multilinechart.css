@@ -1,5 +1,5 @@
-.interactivity {
-  width: 800px;
+body {
+  font-family: sans-serif;
 }
 
 .axis--x path {
@@ -35,16 +35,63 @@
 }
 
 .controls {
+  position: relative;
+
   float: left;
 
   width: 150px;
   height: 500px;
   
   text-align: left;
+
   border: 1px solid black;
 }
 
+.controls-header {
+  position: relative;
+  background: #343A40;
+  color: white;
+  padding: 1px;
+  text-align: center;
+}
+
+.buttons { /* align to bottom of div */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.button {
+  margin: 5px 0px;
+  background-color: #f7f7f7;
+  border: none;
+  color: #343A40;
+  padding: 5px 0px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  width: 100%
+  font-size: 16px;
+}
+
+.button:active {
+	background-color: lightgrey;
+}
+
 #justice-menu {
-  height: 200px;
+  height: 300px;
   overflow-y: scroll;
+  border-bottom: 1px solid black;
+}
+
+div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 60px;          
+    height: 28px;         
+    padding: 2px;       
+    font: 12px sans-serif;    
+    border: 1px;    
+    border-radius: 8px;     
+    pointer-events: none;     
 }

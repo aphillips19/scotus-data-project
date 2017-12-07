@@ -9,6 +9,7 @@ var NS = {}; // create namespace
 
   //NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_Legagraphion.csv"
   //NS.datapath = "../../Data/SCDB_small.csv"
+  
   NS.datapath = "../../Data/SCDB_M_justiceCentered.csv"
   //NS.datapath = "../../Data/SCDB_M_justiceCentered_small.csv"
 
@@ -16,7 +17,22 @@ var NS = {}; // create namespace
 
 
 // Get the mean voting data
+
+function swingVoteImportance(v) {
+  var n = v.length;
+  var sum = 0;
+
+  for(var i = 0; i < n; i++) {
+    if( v[i].median == 1
+        && v[i].majVotes == 5
+        && v[i].majority == 1      )
+      sum++;
+  }
+  return sum;
+}
+
 function aggregateData() {
+  console.log("Performing data aggregation...")
   NS.dataNested = d3.nest()
     // nest by justice
     .key(function(d) {return d.justiceName})
@@ -33,10 +49,40 @@ function aggregateData() {
                       }
               }),
         n: v.length,
-        swing: v[0].median
+        swing: v[0].median,
+
+        // number of cases in that year that were 5-4 where he/she was in
+        // the majority - in other words, when the swing vote mattered.
+        swingImportance: swingVoteImportance(v)
       };
     })
     .entries(NS.dataset);
+
+  // Make the list of which justices will be shown; by default, show none.
+  NS.justiceList = {};
+  NS.dataNested.forEach(function(justice) {
+    NS.justiceList[justice.key] = false;
+  })
+
+/*
+  // add groupings of justices that can all be selected at once
+  NS.justiceGroups = {
+    1: {
+      label: "Group One",
+      description: "All justices who have ever been the swing vote",
+      justices: NS.dataNested.forEach(function(justice) {
+        justice.forEach(function(year)) function
+      })
+
+      }  
+  }
+  */
+/*
+  NS.justiceList = NS.dataNested.map(function(d) {
+    console.log(1);
+    return {key: d.key, value: false};
+  });
+  */
 }
 
 
@@ -44,7 +90,7 @@ function aggregateData() {
 // function getSwingVote() {}
 
 function initialize() {
-
+  console.log("Loading data...")
   // Load SCDB data, store in NS.dataset
   d3.csv(NS.datapath, function(data) {
     NS.dataset = data;
@@ -122,7 +168,7 @@ function setupContext() {
 }
 
 function createGraph() {
-
+  console.log("Creating the graph...")
   // Select the SVG
   NS.svg = d3.select("svg");
 
@@ -178,7 +224,7 @@ function createGraph() {
     .attr("class", "justice--line")
     .attr("d", function(d) { return NS.line(d.values); })
     .style("stroke", function(d) {
-      return fade(NS.z(d.key), d.key);
+      return fade(d.key);
     })
     .style("stroke-width", 2)
     .attr("clip-path", "url(#clip)");
@@ -195,7 +241,7 @@ function createGraph() {
       .attr("dy", "0.35em")
       .style("font", "10px sans-serif")
       .style("fill", function(d) {
-        return fade("black", d.justice);
+        return fade(d.justice);
       })
       .text(function(d) { return d.justice; });
 
@@ -256,50 +302,21 @@ function createGraph() {
 
 }
 
-function fade (c, j) {
-    var shownJustices = ["JPStevens", "DHSouter", "SDOConnor", "WHRehnquist", "HHBurton"];
-    if(shownJustices.includes(j)) {
-      return c;
+
+function fade (j) {
+    if(NS.justiceList[j]) {
+      // return color
+      return NS.z(j)
     } else {
-      // fade it
-      var color = d3.color(c)
-      color.opacity = 0.1;
-      return color.toString();
+      // return faded grey
+      return "rgba(0, 0, 0, .025)";
     }
-}
-
-// Code adapted from d3.extent in order to return multiple consecutive ranges
-function multipleConsecutiveRanges(values, valueof) {
-
-  var ranges = []
-
-  var n = values.length,
-  i = -1,
-  value,
-  min,
-  max;
-
-  while(++i < n) { // find the first comparable value
-    if((value = valueof(values[i], i, values)) != null && value >= value) {
-      min = max = value;
-    }
-    while ( (++i < n) ) {
-    // compare the remaining values till the end is reached or a number is not consecutive
-      if((value = valueof(values[i], i, values)) != null) {
-        if(min < value) min = value;
-        if(max < value) max = value;
-      }
-    }
-
-    if(min != null) {
-      console.log(ranges);
-      ranges.push([min, max]);
-    }
-  }
 }
 
 function setupSwingVotes() {
-
+  // scale for the radius
+  NS.r=d3.scaleLinear().domain([0, 10]).range([2, 6])
+  
   // Mark years where a justice was the swing vote with dots on graph
   NS.justice.append("g")
     .attr("class", "justice--swing")
@@ -318,16 +335,12 @@ function setupSwingVotes() {
     .append("circle")
     .attr("class", "justice--swing-circle")
     .attr("visibility", "visible")
-    .attr("r", "4")
-
-    .attr("fill", function(d) {
-      var id = this.parentNode.parentNode.id;
-      return fade("black", id);
-    })
+    .attr("r", function(d) {return NS.r(d.value.swingImportance); })
+    .attr("fill", "white")
     .attr("stroke-width", "2")
     .attr("stroke", function(d) {
       var id = this.parentNode.parentNode.id;
-      return fade(NS.z(id), id);
+      return fade(id);
     })
     .attr("cx", function(d, i) {
       return NS.x(d.key)
@@ -337,33 +350,118 @@ function setupSwingVotes() {
     })
     // Hide by default
     .attr("visibility", "hidden");
+
+    NS.showSwingVotes = false;
 }
 
+// toggle all swing votes
 function toggleSwingVotes() {
-  var circles = NS.justice.select(".justice--swing")
-    .selectAll(".justice--swing-circle");
-  
-  if(circles.attr("visibility") == "visible")
-    circles.attr("visibility", "hidden");
-  else
-    circles.attr("visibility", "visible");
+  updateSwingVoteColor();
+  if(NS.showSwingVotes) { 
+    NS.showSwingVotes = false;
+    var circles = NS.justice.selectAll(".justice--swing-circle")
+      .attr("visibility", "hidden")
+  } else {
+    NS.showSwingVotes = true;
+    for(justice in NS.justiceList) {
+      if(NS.justiceList[justice]) {
+        setJusticeSwingVotes(justice, "visible");
+      }
+    }
+  }
+}
+
+// toggle one justice's swing vote
+function setJusticeSwingVotes(name, value) {
+  var circles = NS.focus.select("#" + name)
+    .selectAll(".justice--swing-circle").attr("visibility", value);
 }
 
 function eventListeners() {
-  console.log("listening...");
-  NS.focus.selectAll(".justice")
+  NS.hoveringOver = {};
+  console.log("Listening...");
+
+  d3.selectAll(".justice--swing-circle")
     .on("mouseover", function () {
-      //if(d3.select(this).attr("class") == "justice--swing-circle")
-        lineMouseOver(this);
+      pointMouseOver(this);
     })
+    .on("mouseout", function() {
+      pointMouseOut(this);
+    })
+    .on("mousemove", mousemove)
 }
 
-function lineMouseOver(justice) {
-  //console.log(justice);
+function hideTooltip() {
+  /*
+  d3.select(".tooltip")
+    .style("display", "none")
+    */
+}
+
+function showTooltip() {
+  d3.select(".tooltip")
+    .style("display", "block")
+}
+
+function pointMouseOut(point) {
+  hideTooltip();
+}
+
+function pointMouseOver(point) {
+  showTooltip();
+/*  updateTooltip(NS.mousePosition, justice); */ // for lines
+  updateTooltips(d3.select(point))
+}
+
+function updateTooltips(point) {
+  var x = +point.attr("cx");
+  var y = +point.attr("cy") + 100;
+
+  d3.select(".tooltip")
+    .style("display", "block")
+    .style("left", x + "px")   
+    .style("top", y + "px")
+
 }
 
 
-function updateJustices() {
+/* // FOR LINES:
+function updateTooltip(pos, justice) {
+  var data = d3.select(justice).data()[0].values,
+      bisectDate = d3.bisector(function(d) { return +d.key }).left;
+  var x0 = NS.x.invert(pos[0]),  // get the year of the mouse pointer's location
+      i = bisectDate(data, x0)    // get the index of this year, rounded down
+      d0 = data[i - 1],
+      d1 = data[i],
+      d = 0;
+    if(typeof d1 == "undefined") d = d0; else if(typeof(d0) == "undefined") d = d1;
+    else
+      d = x0 - (+d0.year) > (+d1.year) - x0 ? d1 : d0;  // determine which year it is closest to
+
+  d3.select(".tooltip")
+    .style("display", "block")
+    .style("left", (NS.x(d.key)) + 10 + "px")   
+    .style("top", (d3.event.pageY - 28 - 50) + "px")
+    .html(function() {
+      var number = "n: " + d.value.n;
+      var mean = "value: " + d.value.mean;
+      var swing = "5-4 decisions: " + d.value.swingImportance;
+      var res = number + "<br>" + mean;
+      if(NS.showSwingVotes && d.value.swing == 1 )
+        res += "<br>" + d.value.swingImportance;
+      return res;
+    });
+
+}
+*/
+
+function mousemove() {
+  NS.mousePosition = d3.mouse(this);
+}
+
+
+
+function updateJusticePosition() {
   // update axis
   NS.focus.select(".axis--x").call(NS.xAxis);
 
@@ -403,13 +501,11 @@ function updateJustices() {
       return "translate(" + x + "," + NS.y(d.value.value.mean) + ")";
     });
 
-  // update swing votes, if necessary
-  // if...
-  updateSwingVotes(justice);
+  updateSwingVotePosition();
 }
 
-function updateSwingVotes(justice) {
-  justice.selectAll("circle")
+function updateSwingVotePosition() {
+  NS.justice.selectAll("circle")
     .attr("cx", function(d, i) {
       return NS.x(d.key)
     })
@@ -417,64 +513,196 @@ function updateSwingVotes(justice) {
       return NS.y(d.value.mean)
     });
 }
+
 function justiceMenu() {
-  var div = d3.select("#justice-menu");
-  var justiceMenu = div.append("svg")
-    .attr("height", "500")
-    .attr("width", function() {
+  NS.menuSettings = {
+    height: 680,
+    width: function() {
       var w = div.style("width");// get the width of the div from the CSS styling
       return +w.substring(0, w.length - 2) // remove the "px"
-    });
-
-
-  var menuSettings = {
-    margin: {top: 2, bottom: 2, left: 5},
+    },
+    padding: {top: 4, bottom: 4, left: 5},
     fontSize: 10,
-    lineSpacing: 18,
     squareSize: 10,
-    xSpacing: 4,
+    xSpacing: 14,
   };
 
+
+  NS.menuSettings.yOffset = NS.menuSettings.padding.top + NS.menuSettings.padding.bottom + NS.menuSettings.fontSize;
+
+  var div = d3.select("#justice-menu");
+  var justiceMenu = div.append("svg")
+    .attr("height", NS.menuSettings.height)
+    .attr("width", NS.menuSettings.width);
 
   var jmo = justiceMenu.selectAll(".justice-menu-option") // Justice Menu Option
     .data(NS.dataNested)
     .enter().append("g")
     .attr("class", "justice-menu-option")
+    .attr("id", function(d) {return "jmo-" + d.key});
 
+  // background for each entry
   jmo.append("rect")
-    .attr("width", menuSettings.squareSize)
-    .attr("height", menuSettings.squareSize)
-    .attr("fill", function(d) {
-      return NS.z(d.key)
-    })
+    .attr("class", "jmo-background")
+    .attr("width", NS.menuSettings.width)
+    .attr("height", NS.menuSettings.yOffset)
+    .attr("y", function(d, i) { return (i) * NS.menuSettings.yOffset})
+    // white by default
+    .attr("fill", "white");
+
+  jmo.append("rect") // legend square
+    .attr("class", "jmo-square")
+    .attr("width", NS.menuSettings.squareSize)
+    .attr("height", NS.menuSettings.squareSize)
+    .attr("fill", "rgba(0, 0, 0, .025")
     .attr("stroke", "black")
     .attr("stroke-width", "1px")
-    .attr("y", function(d, i) { return i * menuSettings.lineSpacing; });
+    .attr("y", function(d, i) { return i * NS.menuSettings.yOffset + NS.menuSettings.padding.top})
+    .attr("x", NS.menuSettings.padding.left);
 
 
-  jmo.append("text")
-    .text(function(d) { return d.key; })
-    .attr("x", 20)
+  jmo.append("text") // label text
+    .attr("class", "jmo-text")
+    .text(function(d) {
+      var start = d.values[0].key;
+      var end = d.values[d.values.length - 1].key;
+      return d.key + " [" + start + " - " + end + "]";
+    })
+    .attr("x", NS.menuSettings.padding.left + NS.menuSettings.xSpacing)
     .style("font", "10px sans-serif")
-    .attr("y", function(d, i) { return i * menuSettings.lineSpacing })
+    .attr("y", function(d, i) { return i * NS.menuSettings.yOffset + NS.menuSettings.fontSize + NS.menuSettings.padding.top - 1})
 
+
+  // update colors at default values
+  updateJusticeColor();
+
+  // listen for changes
+  jmo.on("click", function(d) {
+    var j = d3.select(this);
+    updateMenu(j, d.key, "toggle");
+  });
+
+}
+
+
+function updateMenu(j, name, type) {
+  var unsel = {
+    selected: false,
+    bg: "white",
+    color: function(d) {return "rgba(0, 0, 0, 0.025)"; }
+  };
+  var sel = {
+    selected: true,
+    bg: "lightgrey",
+    color: function(d) {
+      return NS.z(d.key);
+    }
+  };
+
+  var x = {};
+
+  if(type == "toggle") {
+    if(NS.justiceList[name]) {
+      x = unsel;
+    } else {
+      x = sel;
+    }
+  } else if(type == "select") {
+    x = sel;
+  } else {
+    x = unsel;
+  }
+
+  NS.justiceList[name] = x.selected;
+  j.select(".jmo-background").attr("fill", x.bg);
+  j.select(".jmo-square").attr("fill", function(d) {return x.color(d)});
+
+
+  // move the justice object to the front
+  NS.focus.select("#" + name).moveToFront();
+
+  // update colors of justices
+  updateJusticeColor();
+
+  // ensure swing votes are visible if necessary
+  if(NS.showSwingVotes && x.selected) {
+    updateSwingVoteColor()
+    setJusticeSwingVotes(name, "visible");
+  } else {  
+    setJusticeSwingVotes(name, "hidden");
+  }
+}
+
+
+function updateJusticeColor() {
+
+  // change the color of the line and label
+  NS.justice.select(".justice--line")
+    .style("stroke", function(d) {
+      return fade(d.key);
+  });
+  NS.justice.select(".justice--label-text")
+    .style("fill", function(d) {
+      return fade(d.key);
+  });
+
+  // remove and re-add the justice group, in order to bring it to the front
+  // of the svg
+  NS.justice.sort()
+}
+
+function updateSwingVoteColor() {
+  var circles = NS.justice.selectAll("circle");
+  circles.attr("fill", "white")
+  .attr("stroke", function(d) {
+      var id = this.parentNode.parentNode.id;
+      return fade(id);
+    })
+}
+
+function clearAllJustices() {
+  for (name in NS.justiceList) {
+    if(NS.justiceList[name]) {
+      var j = d3.select("#jmo-" + name);
+      updateMenu(j, name, "deselect");
+    }
+  }
+}
+
+function showAllJustices() {
+  for (name in NS.justiceList) {
+    var j = d3.select("#jmo-" + name);
+    updateMenu(j, name, "select");
+  }
 }
 
 function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
   var s = d3.event.selection || NS.x2.range();
   NS.x.domain(s.map(NS.x2.invert, NS.x2));
-  updateJustices();
+  updateJusticePosition();
 }
+
+/* mouseover adapted from https://bl.ocks.org/alandunning/cfb7dcd7951826b9eacd54f0647f48d3 */
+
+
 
 function main() {
   aggregateData();
   createGraph();
-  eventListeners();
   setupSwingVotes();
   justiceMenu();
+  eventListeners();
 }
 
+/* Run the code */
+
+// https://github.com/wbkd/d3-extended
+d3.selection.prototype.moveToFront = function() { 
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
 
 initialize();
 

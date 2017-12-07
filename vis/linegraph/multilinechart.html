@@ -10,18 +10,28 @@
 <body>
   <a href="../index.html">Go Back</a>
   <p> Multi-Series Line Chart [WIP]</p>
-  <p> Graphs the mean decision direction for each justice in each year. 0 = conservative and 1 = liberal.</p>
+  <p> Graphs the average vote direction (0=conservative, 1=liberal) for each justice in a given year</p>
+  <p> Select a justice on the righthand side. Adjust the time scale on the bottom. </p>
+  <p> When swing votes are toggled, the size of the circle represents the number of 5-4 decisions in that year; in other words, the importance of their swing vote</p>
   <div class="visualization">
     <div class="graph">
       <svg width="850" height="500"></svg>
     </div>
     <div class="controls">
-      <button onclick="toggleSwingVotes()">Toggle swing votes</button>
+      <div class="controls-header">
+        <p>Select Justices</p>
+      </div>
       <div id="justice-menu">
         <!-- js will add an svg here, dimensions depend on the number of justices -->
       </div>
+      <div class="buttons">
+        <button class="button" onclick="clearAllJustices()">Clear all justices</button>
+        <button class="button" onclick="showAllJustices()">Show all justices</button>
+        <button class="button" onclick="toggleSwingVotes()">Toggle swing votes</button>
+      </div>
     </div>
   </div>
+  <div class="tooltip"></div>
   <script type="text/javascript" src="./multilinechart.js"></script>
 </body>
 
