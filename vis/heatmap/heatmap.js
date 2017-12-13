@@ -57,16 +57,46 @@ function aggregateData() {
 
     .key(function(d) {return d.justiceName})
 
-    .rollup(function(v) {
+    .rollup( function(v) {
         // direction for each issue area (14 total)
-        directions = [];
-        for(var i = 1; i <= 14; i++) {
+        results = [];
+        // iterate through each issue area, using i to keep track
+        for(var i = 0; i < 14; i++) {
+          
+          // keep track of n
+          var maj = 0;
+          var min = 0;
+          
+          // calculate the mean decision direction, if decisions were conservative (1)
+          // or liberal (2); otherwise, ignore them.
           var dir = d3.mean(v, function(d) {
-            if(i == d.issueArea) { return d.direction; }
-          });
-          directions[i - 1] = d3.format(".2f")(dir);
+            if(i+1 == d.issueArea) {
+              if(+d.direction >= 1 && +d.direction <= 2) {
+                // use this opportunity, as we iterate through the dataset, to also get
+                // the majority and minority sums, and keep track of n
+                if(+d.majority == 2) maj++;
+                else if(+d.majority == 1) min++;
+                // return the decision direction
+                return +d.direction;
+              }
+            }
+
+            // if there were no votes for this issues area that had either liberal
+            // decisions, or any majority/minority data,  we ignore this set of data
+            // entirely. ( this was approved by Sorenson)
+            if(isNaN(dir) || (maj == 0 && min == 0) ) {
+              results[i] = undefined;
+            } else {
+              results[i] = {
+                direction: d3.format(".2f")(dir),
+                split: {maj: maj, min: min},
+                n: maj + min
+             };
+            }
+          }); 
         }
-        return directions;
+
+        return results;
       })
     .entries(NS.dataset);
 
@@ -82,11 +112,17 @@ function aggregateData() {
     NS.justices[i] = d.key;
     // do stuff
     NS.issueAreas.forEach(function (v, j) {
-      line = {
-        justiceName: i,
-        issueArea: j,
-        direction: d.value[j]
-      }
+      if(typeof d.value[j] == "undefined") return undefined;
+      else {
+        line = {
+          justiceName: i,
+          issueArea: j,
+          direction: d.value[j].direction,
+          majority:  d.value[j].split.maj,
+          minority:  d.value[j].split.minority,
+          n: d.value[j].n
+        }
+     }
       NS.dataGood.push(line);
     })
   })
