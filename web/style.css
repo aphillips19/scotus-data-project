@@ -1,0 +1,104 @@
+body {
+  font-family: sans-serif;
+}
+
+a {
+  color: #007BFF;
+}
+
+.main {
+  padding-top: 30px;
+  margin: 0 auto;
+  border: 1px;
+  width: 1200px;
+  z-index: 1;
+
+}
+
+
+#project-title {
+  font-size: 30px;
+}
+
+.project-description {
+  margin: 0 auto;
+  width: 800px;
+  padding: 20px;
+}
+
+#title {
+  padding-top: 30px;
+}
+
+.heading h3, .heading h2{
+  margin: 0 auto;
+  text-align: center;
+}
+.heading h3 {
+  padding: 10px;
+  width: 200px;
+}
+
+.heading h2 {
+  font-size: 30px;
+  padding-top: 20px;
+  padding-bottom: 0px;
+}
+.content {
+  text-align: justify;
+  text-justify: inter-word;
+}
+#authors {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.column {
+  float: left;
+  margin: 8px;
+  width: 580px;
+  border: 2px lightgrey solid;
+  background: #F7F7F7;
+  height: 400px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.visualization-links, .visualization {
+  margin: 0 auto;
+}
+
+.vis-info {
+  padding: 10px;
+}
+
+.glance {
+  margin: 8px;
+  margin-top: 16px;
+  width: 1180px;
+  height: 100px;
+  border: 2px lightgrey solid;
+  background: #F7F7F7;
+  text-align: justify;
+}
+
+#sidetab {
+  background: #292b2c;
+  color: white;
+  width: 90px;
+  padding: 3px;
+
+}
+
+.glance p {
+  padding-top: 5px;
+  padding-left: 80px;
+  padding-right: 80px;
+  display: inline-block;
+}
+
+

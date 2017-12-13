@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Scatterplot</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="multilinechart.css">
+  <link rel="stylesheet" type="text/css" href="../../web/navbar.css">
+  <link rel="stylesheet" type="text/css" href="../../web/style.css">
+</head>
+
+<body>
+
+  <div class="navbar">
+    <ul>
+      <li><a href="../../web">Home</a></li>
+      <li><a href="/details.html">Data Details</a></li>
+      <li><a href="../vis/linegraph/multilinechart.html">Line Graph</a></li>
+      <li><a href="#">Heatmap</a></li>
+      <li><a class="active" href="#">Scatterplot</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class=project-description>
+      <div class="heading"> <h3>Scatterplot</h3></div>
+      <div class="content">
+        <p>Shows the number of conservative/liberal/unspecifiable decisions per year (at the case level)</p>
+        <p>Blue = liberal decision, Red = conservative decision, Grey = unspecified descision</p>
+      </div>
+    </div>
+  <div>
+  </div>
+  <div class="interactivity">
+    <div class="buttons">
+      <button class="button" onclick="updateScatterplotToAbsolute()">Absolute</button>
+      <button class="button" onclick="updateScatterplotToRelative()">Relative</button>
+    </div>
+    <h3>Proposed interactivity:</h3>
+    <ul>
+      <li> Choose an individual issue are </li>
+      <li> See an individual justice's votes rather than, or versus, the court's decisions </li>
+    </ul>
+  </div>
+  <script type="text/javascript" src="./scatterplot.js"></script>
+</body>
+
+</html>

@@ -18,7 +18,7 @@ var NS = {}; // create namespace
 
 // Get the mean voting data
 
-function swingVoteImportance(v) {
+function countSwingVotes(v) {
   var n = v.length;
   var sum = 0;
 
@@ -53,7 +53,7 @@ function aggregateData() {
 
         // number of cases in that year that were 5-4 where he/she was in
         // the majority - in other words, when the swing vote mattered.
-        swingImportance: swingVoteImportance(v)
+        swingImportance: countSwingVotes(v)
       };
     })
     .entries(NS.dataset);
@@ -62,6 +62,9 @@ function aggregateData() {
   NS.justiceList = {};
   NS.dataNested.forEach(function(justice) {
     NS.justiceList[justice.key] = false;
+
+  // remove the "loading data" SVG text
+  NS.svg.select("text").remove();
   })
 
 /*
@@ -90,6 +93,12 @@ function aggregateData() {
 // function getSwingVote() {}
 
 function initialize() {
+  // change SVG to reflect loading data
+  NS.svg = d3.select("svg"); // select the SVG (will be often used later on)
+  NS.svg.append("text").text("Loading data...")
+    .attr("x", 400)
+    .attr("y", 200);
+
   console.log("Loading data...")
   // Load SCDB data, store in NS.dataset
   d3.csv(NS.datapath, function(data) {
@@ -119,9 +128,7 @@ function setupFocus() {
 
   // create x axis
   NS.xAxis = d3.axisBottom(NS.x)
-             .tickFormat(function(d) {
-               return d;
-             });
+             .tickFormat(d3.format(".0f"));
 
   NS.line = d3.line()
     //.curve(d3.curveBasis)
@@ -151,15 +158,14 @@ function setupContext() {
 
   // create x axis
   NS.xAxis2 = d3.axisBottom(NS.x2)
-             .tickFormat(function(d) {
-               return d;
-             });
+             .tickFormat(d3.format(".0f"));
 
   // NOTE: I can make it snap! https://github.com/d3/d3-brush
   // Add the brush
   NS.brush = d3.brushX()
     .extent([[0,0], [NS.width, NS.height2]])
     .on("brush end", brushed)
+  
 
   // Store the context - the timeline
   NS.context = NS.svg.append("g")
@@ -169,8 +175,7 @@ function setupContext() {
 
 function createGraph() {
   console.log("Creating the graph...")
-  // Select the SVG
-  NS.svg = d3.select("svg");
+
 
   // Set the margins for the focus and context views
   NS.margin = {top: 20,   right: 80, bottom: 110, left: 40},
@@ -287,11 +292,15 @@ function createGraph() {
     .attr("y", NS.height2/2 + 5)
     .text(function(d) {return d.chief; })
 
+  // add the brush to the SVG
   NS.context.append("g")
     .attr("class", "brush")
     .call(NS.brush)
     .call(NS.brush.move, NS.x.range())
-
+  // round the edges of the brush
+  NS.context.select(".selection")
+    .attr("rx", 7)
+    .attr("ry", 7)
 
   // Create a box to clip paths so that lines don't go out of bounds
   NS.svg.append("defs").append("clipPath")
@@ -334,6 +343,7 @@ function setupSwingVotes() {
     .filter(function(d) { return d.value.swing == 1; })
     .append("circle")
     .attr("class", "justice--swing-circle")
+    .attr("clip-path", "url(#clip)")
     .attr("visibility", "visible")
     .attr("r", function(d) {return NS.r(d.value.swingImportance); })
     .attr("fill", "white")
@@ -349,7 +359,10 @@ function setupSwingVotes() {
       return NS.y(d.value.mean)
     })
     // Hide by default
-    .attr("visibility", "hidden");
+    .attr("visibility", "hidden")
+
+    // add data so it can be retrieved by other functions
+    .datum(function(d) {return d; });
 
     NS.showSwingVotes = false;
 }
@@ -377,6 +390,7 @@ function setJusticeSwingVotes(name, value) {
     .selectAll(".justice--swing-circle").attr("visibility", value);
 }
 
+
 function eventListeners() {
   NS.hoveringOver = {};
   console.log("Listening...");
@@ -392,10 +406,8 @@ function eventListeners() {
 }
 
 function hideTooltip() {
-  /*
   d3.select(".tooltip")
     .style("display", "none")
-    */
 }
 
 function showTooltip() {
@@ -409,18 +421,31 @@ function pointMouseOut(point) {
 
 function pointMouseOver(point) {
   showTooltip();
-/*  updateTooltip(NS.mousePosition, justice); */ // for lines
-  updateTooltips(d3.select(point))
+  updateTooltips(point)
 }
 
 function updateTooltips(point) {
-  var x = +point.attr("cx");
-  var y = +point.attr("cy") + 100;
-
+  var pointSel = d3.select(point);
+  // change the position of the tooltip to be just above the point; the
+  // "magic numbers" ensure it is centered and above the point
+  var x = +pointSel.attr("cx") + 55;
+  var y = +pointSel.attr("cy") + NS.height/2 - pointSel.attr("r") - 20;
   d3.select(".tooltip")
     .style("display", "block")
     .style("left", x + "px")   
     .style("top", y + "px")
+
+
+  // grab information about the point (which justice it corresponds to)
+  // change information inside the tooltip
+  var d = pointSel.datum()
+  d.percent = d3.format(".1f")(d.value.swingImportance / d.value.n)
+  var content = ("In " + d.key + ", " + d.value.swingImportance + " out of "
+                + d.value.n + " (" + d.percent + "%) votes were in 5-4 decisions");
+  document.getElementById("tooltip-text")
+    .innerHTML = content;
+
+
 
 }
 

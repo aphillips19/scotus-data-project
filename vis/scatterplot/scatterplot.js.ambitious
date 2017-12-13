@@ -1,0 +1,181 @@
+/* Scatterplot prototype
+ * Andrew Phillips & Jake Rourke
+ * Nov 13, 2017 */
+
+// Code adapted from my Lab 4 scatterplot
+
+
+var NS = {}; // create namespace
+
+//NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_LegalProvision.csv"
+NS.datapath = "../../Data/SCDB_small.csv"
+
+NS.width = 800;      // of SVG
+NS.height = 400;     // of SVG
+NS.padding = 30;
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+function aggregateData() {
+
+  // nest the data per case
+  NS.dataPC = d3.nest()
+    //.key(function(d) {return (19 + d.dateDecision.split("/")[2]); } )
+    .key(function(d) {return d.caseId})
+    
+    // all of the individual entries for each year will have the same decision
+    // direction, but rollup seems like the easiest way to move that data
+    // to the case- rather than justice- level, even though it is a more
+    // powerful tool than necessary.
+    .rollup(function(d) { return {
+        decisionDirection: 0 + d[0].decisionDirection,
+        year: 19 + d[0].dateDecision.split("/")[2] 
+      }
+    })
+    .map(NS.dataset);
+
+  // create an array of the 3 possible directions, serving two purposes:
+  // 1) used to make the code for increasing counters a little cleaner
+  // 2) used as the "series names" in the mbostock example
+                 // [ 0 ,  1 ,  2 ]
+  var directions = ["c", "l", "u"]
+
+  // make a dataset that is comprised of the total number of conservative (c),
+  // liberal (l), or unspecifiable (u) decisions in each year.
+  NS.dataAgg = [];
+  
+  NS.dataPC.each(function (d) {
+    // populate with object the first time
+    if(NS.dataAgg[d.year - 1946] == undefined) {
+      NS.dataAgg[d.year - 1946] = {year: d.year, c: 0, l: 0, u: 0};
+    }
+
+    if(d.decisionDirection != "") { // ignore missing values
+      // increase a decision direction counter
+      NS.dataAgg[d.year - 1946][directions[d.decisionDirection - 1]]++;
+    }
+  })
+
+  var seriesNames = d3.keys(NS.dataAgg[1946])
+      .filter(function(d) { return d !== "year"; })
+      .sort();
+  NS.series = seriesNames.map(function(series) {
+    return NS.dataAgg.map(function(d) {
+      return {year: +d.year, y: +d[series]};
+    })
+  })
+
+
+}
+
+
+function main () {
+  console.log("main function");
+
+  // aggregate data
+  aggregateData();
+
+  // make the SVG
+  var svg = makeSVG();
+
+  // Define scales
+  NS.xScale = d3.scaleLinear()
+              .domain([1946, d3.max(NS.dataAgg, function(d) {
+                console.log(d);
+                return d.year;
+              }) ])
+              .range([NS.padding, NS.width - NS.padding * 2]);
+
+  NS.yScale = d3.scaleLinear()
+              // max is the maximum decisions in either lib/cons/unsp in all
+              // the years
+              .domain([0, d3.max(NS.dataAgg, function(d) {
+                var options = [d.c, d.l, d.u];
+                return d3.max(options, function (d) {return d;});
+              }) ])
+             .range([NS.height - NS.padding, NS.padding]);
+
+  NS.zScale = d3.scale.category10();
+
+ 
+  //Define axes
+  NS.xAxis = d3.axisBottom()
+            .scale(NS.xScale)
+
+  NS.yAxis = d3.axisLeft()
+            .scale(NS.yScale)
+            .ticks(5);
+
+  // add HTML elements
+  addHTML();
+
+  // make scatterplot
+  makeScatterplot(svg);
+}
+
+
+function initialize() {
+
+  // add HTML elements
+  //addHTML();
+
+  // Load census data and call main
+  d3.csv(NS.datapath, function(d) {
+    NS.dataset = d;
+    main();
+  });
+}
+
+function addHTML() {
+  //document.write("<p>redraw data!</p>");
+}
+
+function makeScatterplot (svg) {
+
+  console.log("make scatterplot");
+
+  //Add circles
+  svg.selectAll(".series")
+    .data(NS.series)
+    .enter().append("g")
+    .attr("class", "series")
+    .style("fill", function(d, i) {return NS.zScale(i); })
+    .selectAll(".point")
+    .data(function(d) {return d;})
+    .enter().append("circle")
+    .attr("class", "point")
+    .attr("r", 4)
+    .attr("cx", function(d) {return NS.xScale(d.year)})
+    .attr("cy", function(d) {return NS.yScale(d.y)})
+
+  //Create X axis
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + (NS.height - NS.padding) + ")")
+    .call(NS.xAxis);
+  
+  //Create Y axis
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(" + NS.padding + ",0)")
+    .call(NS.yAxis);
+}
+
+// create the SVG context and return it
+function makeSVG () {
+
+  //Create SVG element
+  var svg = d3.select("body")
+        .append("svg")
+        .attr("width", NS.width)
+        .attr("height", NS.height);
+
+  return svg
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+initialize()
