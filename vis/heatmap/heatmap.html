@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang=en>
+
+<head>
+  <title>Heatmap</title>
+  <script type=text/javascript src=https://d3js.org/d3.v4.min.js></script>
+  <script src="d3-tip.js"></script>
+</head>
+
+<body>
+  <a href="http://www.bowdoin.edu/~acphilli/proj/scotus-data-project/web/public.html">Go Back</a>
+  <p> Heatmap </p>
+  <p>Shows the direction of justice's average votes by issue area</p>
+  <script type=text/javascript src=./heatmap.js></script>
+  <div id="info", style="width: 200px">
+  <p>Red = conservative, Blue = liberal, Purple = moderate<p>
+
+  </div>
+
+  <!--
+  <svg id="piechart", x="0", y="0", style="width: 400px; height: 200px">
+  -->
+  
+  </svg>
+
+   
+   <button onclick="regularButton()">By Issue Area</button> 
+   <button onclick="civilButton()">Civil Liberties</button> 
+
+</body>
+
+</html>
