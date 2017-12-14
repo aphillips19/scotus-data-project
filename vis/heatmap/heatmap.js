@@ -107,7 +107,7 @@ function aggregateData() {
         if(aggregates[issueArea].direction > 0) 
           aggregates[issueArea].direction /= aggregates[issueArea].n;
         else
-          aggregates[issueArea].direction = undefined;
+          aggregates[issueArea] = undefined;
       }
       return aggregates;
     })
