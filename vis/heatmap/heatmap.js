@@ -53,51 +53,64 @@ NS.issueAreas = [
 
 
 function aggregateData() {
+  // Nest the data by justice, and aggregate the relevant information.
   NS.dataByJustice = d3.nest()
-
     .key(function(d) {return d.justiceName})
-
     .rollup( function(v) {
-        // direction for each issue area (14 total)
-        results = [];
-        // iterate through each issue area, using i to keep track
-        for(var i = 0; i < 14; i++) {
-          
-          // keep track of n
-          var maj = 0;
-          var min = 0;
-          
-          // calculate the mean decision direction, if decisions were conservative (1)
-          // or liberal (2); otherwise, ignore them.
-          var dir = d3.mean(v, function(d) {
-            if(i+1 == d.issueArea) {
-              if(+d.direction >= 1 && +d.direction <= 2) {
-                // use this opportunity, as we iterate through the dataset, to also get
-                // the majority and minority sums, and keep track of n
-                if(+d.majority == 2) maj++;
-                else if(+d.majority == 1) min++;
-                // return the decision direction
-                return +d.direction;
-              }
-            }
+      // originally, we had hoped to use such functions as d3.mean and d3.sum
+      // for each issue area, but these functions turned out to be incredibly
+      // inefficient when used so many times on a very large dataset. Instead,
+      // we are aggregating the data by iterating through the data ourselves.
 
-            // if there were no votes for this issues area that had either liberal
-            // decisions, or any majority/minority data,  we ignore this set of data
-            // entirely. ( this was approved by Sorenson)
-            if(isNaN(dir) || (maj == 0 && min == 0) ) {
-              results[i] = undefined;
-            } else {
-              results[i] = {
-                direction: d3.format(".2f")(dir),
-                split: {maj: maj, min: min},
-                n: maj + min
-             };
-            }
-          }); 
+      // v is an array of all of the cases of a given justice
+
+      // initialize and populate an array to store aggregate information,
+      // indexed by issue area.
+      aggregates = [];
+      for(var issueArea = 0; issueArea < 14; issueArea++) {
+        aggregates[issueArea] =
+          {
+            direction: 0,
+            opinion: {
+              majority: 0,
+              minority: 0,
+              other: 0
+            },
+            n: 0
+          }
+      }
+      // iterate through each case in the array, incrementing counters by issue area
+      for(var i = 0; i < v.length; i++) {
+        var d = v[i]; // shorthand to make the syntax more similar to d3 methods
+
+        // ignore all cases where the direction is NOT between 1 and 2 (either
+        // 3, meaning unspecifiable, which is not significant in this field,
+        // or data is simply missing). Similarly, ignore if the issue area is
+        // not specified.
+        if(d.direction >= 1 && d.direction <= 2 && d.issueArea != "") {
+          // increment the decision direction, and keep track of n to take the mean later on
+          aggregates[+d.issueArea - 1].direction += +d.direction;
+          aggregates[+d.issueArea - 1].n++;
+
+          // increment the opinion counts (minority/majority/other)
+          if(d.majority == 2)       aggregates[+d.issueArea - 1].opinion.majority++;
+          else if(d.majority == 1)  aggregates[+d.issueArea - 1].opinion.minority++;
+          else                      aggregates[+d.issueArea - 1].opinion.other++;
         }
+      }
 
-        return results;
-      })
+      // in each issue area, divide aggregate direciton by n in order to get the mean
+      // unless the direction is 0 (meaning it has never been recorded)
+      for(var issueArea = 0; issueArea < 14; issueArea++) {
+          // set to undefined if there were no cases in which the justice had a
+          // specifiable direction; these will be ignored in the heatmap
+        if(aggregates[issueArea].direction > 0) 
+          aggregates[issueArea].direction /= aggregates[issueArea].n;
+        else
+          aggregates[issueArea].direction = undefined;
+      }
+      return aggregates;
+    })
     .entries(NS.dataset);
 
 
@@ -118,8 +131,8 @@ function aggregateData() {
           justiceName: i,
           issueArea: j,
           direction: d.value[j].direction,
-          majority:  d.value[j].split.maj,
-          minority:  d.value[j].split.minority,
+          majority:  d.value[j].opinion.majority,
+          minority:  d.value[j].opinion.minority,
           n: d.value[j].n
         }
      }
