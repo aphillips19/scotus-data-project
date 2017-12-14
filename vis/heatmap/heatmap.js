@@ -31,19 +31,19 @@ NS.colors = ['#dc143c','#c70a4e','#b2025f','#9b0070','#800080','#7a368d',
 NS.civil_list = ["Civil Liberty", "Other"]
 
 NS.issueAreas = [
-  "Criminal Procedure",    // 1
+  "Criminal",    // 1
   "Civil Rights",          // 2
-  "First Amendment",       // 3
+  "First Amend.",       // 3
   "Due Process",           // 4
   "Privacy",               // 5
   "Attorneys",             // 6
   "Unions",                // 7
-  "Economic Activity",     // 8
+  "Economic",     // 8
   "Judicial power",        // 9
   "Federalism",            // 10
-  "Interstate Relations",  // 11
-  "Federal Taxation",      // 12
-  "Miscellaneous",         // 13
+  "Interstate",  // 11
+  "Federal Tax",      // 12
+  "Misc.",         // 13
   "Private Action"         // 14
 ]
 
@@ -158,20 +158,19 @@ function aggregateData() {
 */
 
   NS.dataGood.forEach(function (d) {
-    if (d.issueArea >= 0 && d.issueArea <= 5) {
-        d["typeX"] = "Civil Liberty";
-        d["typeNum"] = 0;
-    }
+    d["pieChartData"] = [{"label":"majority", "value":d.majority}, 
+                         {"label":"minority", "value":d.minority}];
 
-    else {
-        d["typeX"] = "Other";
-        d["typeNum"] = 1;
-    }
+
+
   });
 
 
 
   NS.civilDataGood = [];
+
+  NS.majorityT = 0;
+  NS.minorityT = 0;
 
   var justiceCount = 0;
 
@@ -181,21 +180,41 @@ function aggregateData() {
     var count = 0;
     var civil = [];
     var other = [];
+    var majCountC = 0;
+    var minCountC = 0;
+    var majCountO = 0;
+    var minCountO = 0;
 
     //get values into seperate lists
-    d.value.forEach(function (d) {
+    d.value.forEach(function (v) {
+
+      if(typeof v == 'undefined') {
+        count++;
+        return;
+      }
+
+
       if (count <= 5) {
-        civil.push(d);
+        
+        civil.push(v.direction);
+        majCountC += v.opinion.majority;
+        minCountC += v.opinion.minority;
       }
 
       else {
-        other.push(d);
+        other.push(v.direction);
+        majCountO += v.opinion.majority;
+        minCountO += v.opinion.minority;
       }
 
       count++;
 
 
+
+
     });
+
+
 
     //counts for missing data
     var civilMissing = 0;
@@ -204,63 +223,52 @@ function aggregateData() {
 
     //get averages for each
     var civilTotal = 0;
-    civil.forEach(function (d) {
-      if (d == "NaN") {
-        civilMissing++;
-        return;
-      }
+    civil.forEach(function (z) {
 
-      civilTotal += Number(d);
+      civilTotal += z;
+
     });
 
     var otherTotal = 0;
-    other.forEach(function (d) {
-      if (d == "NaN") {
-        otherMissing++;
-        return;
-      }
-      if(d == "0.00") {
-        otherMissing++;
-        return;
-      }
+    other.forEach(function (g) {
 
+      otherTotal += g;
 
-      otherTotal += Number(d);
     });
 
     //console.log(civilTotal)
-    console.log(other)
+    //console.log(other)
 
 
-    var civilVal = civilTotal / (6 - civilMissing);
-    var otherVal = otherTotal / (8 - otherMissing);
+    var civilVal = civilTotal / (civil.length);
+    var otherVal = otherTotal / (other.length);
 
-    NS.civilDataGood.push({ direction: civilVal, justiceName: justiceCount, typeNum: 0});
-    NS.civilDataGood.push({ direction: otherVal, justiceName: justiceCount, typeNum: 1});
+    NS.civilDataGood.push({ direction: civilVal, justiceName: justiceCount, typeNum: 0, pieList: [{"label":"majority", "value":majCountC}, {"label":"minority", "value":minCountC}]});
+    NS.civilDataGood.push({ direction: otherVal, justiceName: justiceCount, typeNum: 1, pieList: [{"label":"majority", "value":majCountO}, {"label":"minority", "value":minCountO}]});
+
+    NS.minorityT += minCountO;
+    NS.minorityT += minCountC;
+    NS.majorityT += majCountO;
+    NS.majorityT += majCountC;
 
     justiceCount++;
+
+
 
 
   });
 
 
 
-
-
-
-
-// data processing for pie chart
-
-
-
-
+NS.pieInitdata = [{"label":"majority", "value":NS.majorityT}, 
+                  {"label":"minority", "value":NS.minorityT}];
 
 
 };
 
 
 function main () {
-  console.log("main function");
+  //console.log("main function");
 
   // aggregate data
   aggregateData();
@@ -268,7 +276,7 @@ function main () {
   // make SVG
   svg = d3.select("body").append("svg")
           .attr("width", NS.width + NS.margin.left + NS.margin.right)
-          .attr("height", NS.height + NS.margin.top + NS.margin.bottom)
+          .attr("height", 900)
           .attr("id", "heatmap")
           .append("g")
           .attr("transform", "translate(" + NS.margin.left + "," + NS.margin.top + ")");
@@ -276,6 +284,8 @@ function main () {
   
 
   heatmap_2(svg);
+
+  pieChart(NS.pieInitdata);
 }
 
 function heatmap(svg) {
@@ -298,12 +308,13 @@ function heatmap(svg) {
       .attr("class", (d, i) => ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"));
 
   issueLabels = svg.selectAll(".issueLabel")
-    .data(d3.keys(NS.issueAreas))
+    .data(NS.issueAreas)
     .enter().append("text")
-      .text((d) => +d + 1)
+      .text(function (d) { return d; })
       .attr("x", (d, i) => i * NS.gridSize)
       .attr("y", 0)
       .style("text-anchor", "middle")
+      .style("font-size", "10px")
       .attr("transform", "translate(" + NS.gridSize / 2 + ", -6)")
       .attr("class", (d, i) => ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"));
 
@@ -334,7 +345,8 @@ function heatmap(svg) {
       .attr("height", NS.gridHeight)
       .style("fill", function(d) {
         return filterColors(d.direction);
-      });
+      })
+      .on('mouseover', function (d) {update1(d.pieChartData)});
 
       legend = svg.selectAll(".legend")
           .data([0].concat(colorScale.quantiles()), (d) => d);
@@ -365,9 +377,6 @@ function heatmap_2(svg) {
 
 
 
-  tip = d3.tip().attr('class', 'd3-tip').html(function(d) { return d.direction; });
-
-  svg.call(tip);
 
   cards = svg.selectAll(".typeNum")
       .data(NS.civilDataGood)
@@ -389,6 +398,7 @@ function heatmap_2(svg) {
       .attr("x", (d, i) => i * NS.gridSize)
       .attr("y", 0)
       .style("text-anchor", "middle")
+      .style("font-size", "12px")
       .attr("transform", "translate(" + NS.gridSize / 2 + ", -6)")
       .attr("class", (d, i) => ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"));
 
@@ -421,8 +431,8 @@ function heatmap_2(svg) {
       .style("fill", function(d) {
         return filterColors(d.direction);
       })
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide);
+      .on('mouseover', function (d) {update1(d.pieList)});
+      //.on('mouseout', tip.hide);
 
       console.log("Gothere22!!!")
 
@@ -464,7 +474,7 @@ function civilButton() {
   // make SVG
   svg = d3.select("body").append("svg")
           .attr("width", NS.width + NS.margin.left + NS.margin.right)
-          .attr("height", NS.height + NS.margin.top + NS.margin.bottom)
+          .attr("height", 900)
           .attr("id", "heatmap")
           .append("g")
           .attr("transform", "translate(" + NS.margin.left + "," + NS.margin.top + ")");
@@ -478,7 +488,7 @@ function regularButton() {
   removeHSVG();
   svg = d3.select("body").append("svg")
           .attr("width", NS.width + NS.margin.left + NS.margin.right)
-          .attr("height", NS.height + NS.margin.top + NS.margin.bottom)
+          .attr("height", 900)          
           .attr("id", "heatmap")
           .append("g")
           .attr("transform", "translate(" + NS.margin.left + "," + NS.margin.top + ")");
@@ -488,21 +498,24 @@ function regularButton() {
 }
 
 
-var sample = [16, 4];
 
-function pieChart(sample) {
+
+
+
+
+function pieChart(data) {
 
   var w = 300,                        //width
   h = 300,                            //height
   r = 150,                            //radius
   color = d3.scaleOrdinal(["#98abc5", "#ff8c00"]);    //builtin range of colo 
   
-  data = [{"label":"majority", "value":20}, 
-          {"label":"minority", "value":50}];
+
   
-  var vis = d3.select("body")
+  var vis = d3.select("#piechart-container")
       .append("svg:svg")              //create the SVG element inside the <body>
       .data([data])                   //associate our data with the document
+          .attr("id", "pieChart")
           .attr("width", w)           //set the width and height of our visualization (these will be attributes of the <svg> tag
           .attr("height", h)
       .append("svg:g")                //make a group to hold our pie chart
@@ -533,10 +546,62 @@ function pieChart(sample) {
           .attr("text-anchor", "middle")                          //center the text on it's origin
           .text(function(d, i) { return data[i].label; });        //get the label from our original data array
         
+
+
+
+
 }
 
+function update1(data) {
+
+  d3.select("#pieChart").remove();
 
 
+
+  var w = 300,                        //width
+  h = 300,                            //height
+  r = 150,                            //radius
+  color = d3.scaleOrdinal(["#98abc5", "#ff8c00"]);    //builtin range of colo 
+  
+
+  
+  var vis = d3.select("#piechart-container")
+      .append("svg:svg")              //create the SVG element inside the <body>
+      .data([data])                   //associate our data with the document
+          .attr("id", "pieChart")
+          .attr("width", w)           //set the width and height of our visualization (these will be attributes of the <svg> tag
+          .attr("height", h)
+      .append("svg:g")                //make a group to hold our pie chart
+          .attr("transform", "translate(" + r + "," + r + ")")    //move the center of the pie chart from 0, 0 to radius, radi  
+  
+  var arc = d3.arc()              //this will create <path> elements for us using arc data
+              .innerRadius(0)
+              .outerRadius(r)
+  
+  var pie = d3.pie()           //this will create arc data for us given a list of values
+      .value(function(d) { return d.value; });    //we must tell it out to access the value of each element in our data arr 
+  
+  var arcs = vis.selectAll("g.slice")     //this selects all <g> elements with class slice (there aren't any yet)
+      .data(pie)                          //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
+      .enter()                            //this will create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array
+          .append("svg:g")                //create a group to hold each slice (we will have a <path> and a <text> element associated with each slice)
+              .attr("class", "slice");    //allow us to style things in the slices (like tex  
+      arcs.append("svg:path")
+              .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
+              .attr("d", arc);                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing functi  
+      arcs.append("svg:text")                                     //add a label to each slice
+              .attr("transform", function(d) {                    //set the label's origin to the center of the arc
+              //we have to make sure to set these before calling arc.centroid
+              d.innerRadius = 0;
+              d.outerRadius = r;
+              return "translate(" + arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
+          })
+          .attr("text-anchor", "middle")                          //center the text on it's origin
+          .text(function(d, i) { return data[i].label; });        //get the label from our original data array
+        
+
+
+}
 
 
 
@@ -558,5 +623,5 @@ function initialize() {
 
 initialize()
 
-pieChart(sample)
+
 
