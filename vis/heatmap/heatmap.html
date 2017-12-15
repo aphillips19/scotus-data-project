@@ -1,31 +1,77 @@
 <!DOCTYPE html>
 <html lang=en>
 
+<link rel="stylesheet" type="text/css" href="../../web/navbar.css">
+<link rel="stylesheet" type="text/css" href="../../web/style.css">
+<style>
+#piechart-container {
+  position: absolute;
+  left: 1000px;
+  top: 500px;
+}
+
+#button1 {
+  position: absolute;
+  left: 200px;
+  top: 400px;
+
+}
+#button2 {
+  position: absolute;
+  left: 400px;
+  top: 400px;
+
+}
+
+</style>
+
+
+
+
 <head>
+    <div class="navbar">
+    <ul>
+      <li><a href="../../web">Home</a></li>
+      <li><a href="/details.html">Data Details</a></li>
+      <li><a href="../vis/linegraph/multilinechart.html">Line Graph</a></li>
+      <li><a class="active" href="#">Heatmap</a></li>
+      <li><a href="#">Scatterplot</a></li>
+    </ul>
+  </div>
+
+
+
+
+
   <title>Heatmap</title>
   <script type=text/javascript src=https://d3js.org/d3.v4.min.js></script>
   <script src="d3-tip.js"></script>
 </head>
 
 <body>
-  <a href="http://www.bowdoin.edu/~acphilli/proj/scotus-data-project/web/public.html">Go Back</a>
-  <p> Heatmap </p>
-  <p>Shows the direction of justice's average votes by issue area</p>
-  <script type=text/javascript src=./heatmap.js></script>
-  <div id="info", style="width: 200px">
-  <p>Red = conservative, Blue = liberal, Purple = moderate<p>
-
+  <div class=project-description>
+      <div class="heading"> <h2>Voting Preference Heatmap</h2></div>
+      <div class="content">
+        <p> desc </p>
+        <p> desc </p>
+        <p>Red = conservative, Blue = liberal, Purple = moderate<p>
+      </div>
   </div>
 
-  <!--
-  <svg id="piechart", x="0", y="0", style="width: 400px; height: 200px">
-  -->
+  <script type=text/javascript src=./heatmap.js></script>
+  
+
+  <div id="piechart-container", style="width: 300px; height: 305px">
+
+  </div>  
+
+
   
   </svg>
 
    
-   <button onclick="regularButton()">By Issue Area</button> 
-   <button onclick="civilButton()">Civil Liberties</button> 
+   <button id="button1", onclick="regularButton()">By Issue Area</button> 
+   <button id="button2", onclick="civilButton()">Civil Liberties</button> 
 
 </body>
 
