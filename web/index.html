@@ -3,6 +3,7 @@
 <head>
   <title>SCOTUS Project</title>
   <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.3/d3-legend.js">   </script>
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="navbar.css">
 </head>
@@ -60,14 +61,18 @@
 
   <div class="heading"> <h3>Visualizations</h3></div>
   <div class="visualization-links">
-    <div class="row">
-      <div class="glance">
-        <div id="sidetab">
-          At a Glance:
-        </div>
-        <!-- js will insert SVG -->
+
+    <div class="glance">
+      <div id="piechart-container"></div>
+      <div id="piechart-title">
+          <span><b>At a Glance:</b> Partisan Breakdown of Decisions from </span> 
+          <select class="datePicker" id="startDate"></select>
+          <span> to </span>
+          <select class="datePicker" id="endDate"></select>
       </div>
     </div>
+    
+
     <div class="row">
       <div class="column">
         <div class="vis-info" id="heatmap-pane">

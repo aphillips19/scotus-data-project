@@ -9,7 +9,6 @@ a {
 .main {
   padding-top: 30px;
   margin: 0 auto;
-  border: 1px;
   width: 1200px;
   z-index: 1;
 
@@ -84,6 +83,20 @@ a {
   border: 2px lightgrey solid;
   background: #F7F7F7;
   text-align: justify;
+}
+
+#piechart-container {
+  float: left;
+}
+#piechart-title {
+  float: right;
+  padding: 125px 70px;
+  font-size: 20px;
+}
+select {
+  width: auto;
+  text-align: center;
+  padding: 3px;
 }
 
 #sidetab {
