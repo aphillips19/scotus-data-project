@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>SCOTUS Project</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="navbar.css">
 </head>
@@ -28,12 +29,12 @@
 
     <div class="heading"> <h3>Project Description</h3></div>
     <div class="content"><p>
-      Our project attempts to visualize when the Supreme Court of the United
-      States decides, and individual Supreme Court Justices vote, in liberal or
-      conservative directions. We examine how this changes over time - in
-      different years, under different Chief Justices, and/or when justices are
-      the swing vote - as well as how it differs in various issue areas. We also
-      look at the breakdown of issue areas more broadly. Four different
+      The goal of our project is to visualize the liberal or conservative
+      decisions of the United States Supreme Court, and each individual Supreme
+      Court Justice's voting preference. We examine how this changes over time -
+      in different years, under different Chief Justices, and/or when justices
+      are the swing vote - as well as how it differs in various issue areas. We
+      also look at the breakdown of issue areas more broadly.  Four different
       visualizations tackle this goal, using data from every justice's vote in
       every supreme court decision from 1946-2015.
     </p></div>
@@ -56,15 +57,15 @@
       for detailed information about the dataset and attributes.
     </p></div>
   </div>
+
   <div class="heading"> <h3>Visualizations</h3></div>
   <div class="visualization-links">
     <div class="row">
       <div class="glance">
-        <div id="sidetab">At a Glance:</div>
-        <p>[Conservative v. Liberal pie chart]</p>
-        <p>[# of cases]</p>
-        <p>[# of justices]</p>
-        <p>[Year picker]</p>
+        <div id="sidetab">
+          At a Glance:
+        </div>
+        <!-- js will insert SVG -->
       </div>
     </div>
     <div class="row">
@@ -120,5 +121,6 @@
 </div>
 
 </div>
+<script type="text/javascript" src="./at-a-glance.js"></script>
 
 </body></html>
