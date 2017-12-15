@@ -322,17 +322,29 @@ function makeScatterplot () {
         else return NS.yScale(y);
       });
 
-  //Create X axis
-  NS.svg.append("g")
-    .attr("class", "axis--x")
-    .attr("transform", "translate(0," + (NS.height - NS.padding) + ")")
-    .call(NS.xAxis);
-  
-  //Create Y axis
-  NS.svg.append("g")
-    .attr("class", "axis--y")
-    .attr("transform", "translate(" + NS.padding + ",0)")
-    .call(NS.yAxis);
+ // add axis labels
+  NS.svg // xlabel
+    .append("text")
+    .attr("class", "xlabel")
+    // center horizontally on the x axis
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate(" + (NS.width - NS.padding) / 2 + "," +
+           (NS.height - NS.padding/3 + ")"))
+    // use xAttribute as the label
+    .text(function() {
+      var x = NS.issueAreas[NS.selectedIssue.type][NS.selectedIssue.index];
+      return x.name;
+    });
+
+  NS.svg // ylabel
+    .append("text")
+    .attr("class", "ylabel")
+    .attr("text-anchor", "middle")
+    // center vertically on the y axis
+    .attr("transform", "translate(" + NS.padding / 3 + ", " +
+            (NS.height) / 2 + ") " + "rotate(-90)")
+    // use yAttribute as the label
+    .text(NS.yAttribute);
 }
 
 // create the SVG context and return it
