@@ -1,3 +1,15 @@
+We are using two versions of the SCDB: justice-centered and case-centered. The former has
+around 100,000 lines of data, 1 for each justice's vote in each case, and the latter around
+10,000 lines of data, 1 for each case. The justice-centered dataset includes all of the 
+information in the case-centered dataset, in addition to information about each justice's
+votes.
+
+Data - stuff goes here
+
+This information is taken from the codebook
+available at: http://scdb.wustl.edu/_brickFiles/2017_01/SCDB_2017_01_codebook.pdf
+
+
 Professor Sorenson has added the following useful columns to the Supreme Court databases, 
 
 
