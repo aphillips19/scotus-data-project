@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Scatterplot</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="donutchart-style.css">
+  <link rel="stylesheet" type="text/css" href="../../web/navbar.css">
+  <link rel="stylesheet" type="text/css" href="../../web/style.css">
+</head>
+
+<body>
+
+  <div class="navbar">
+    <ul>
+      <li><a href="../../web">Home</a></li>
+      <li><a href="/details.html">Data Details</a></li>
+      <li><a href="../vis/linegraph/multilinechart.html">Line Graph</a></li>
+      <li><a href="#">Heatmap</a></li>
+      <li><a class="active" href="#">Scatterplot</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class=project-description>
+      <div class="heading"> <h3>Scatterplot</h3></div>
+      <div class="content">
+        <p>Shows the number of conservative/liberal/unspecifiable decisions per year (at the case level)</p>
+        <p>Blue = liberal decision, Red = conservative decision, Grey = unspecified descision</p>
+      </div>
+
+    <div class="controls">
+
+      <div class="scale-selection">
+        <button class="button" onclick="updateScatterplotToAbsolute()">Absolute</button>
+        <button class="button" onclick="updateScatterplotToRelative()">Relative</button>
+      </div>
+
+      <div class="issue-selection">
+        <p>Issue Area</p>
+        <select id="issueSelect">
+          <optgroup label="Combined Issue Areas" id="combomenu">
+          <optgroup label="Individual Issue Areas" id="realmenu">
+        </select>
+      </div>
+
+    </div>
+    
+    <div class="donut">
+      <!-- js file will add the svg here -->
+    </div>
+
+  </div>
+  <script type="text/javascript" src="./donutchart.js"></script>
+</body>
+
+</html>
