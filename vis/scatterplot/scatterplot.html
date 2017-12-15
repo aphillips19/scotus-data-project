@@ -4,7 +4,7 @@
 <head>
   <title>Scatterplot</title>
   <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="multilinechart.css">
+  <link rel="stylesheet" type="text/css" href="scatterplot-style.css">
   <link rel="stylesheet" type="text/css" href="../../web/navbar.css">
   <link rel="stylesheet" type="text/css" href="../../web/style.css">
 </head>
@@ -28,19 +28,28 @@
         <p>Shows the number of conservative/liberal/unspecifiable decisions per year (at the case level)</p>
         <p>Blue = liberal decision, Red = conservative decision, Grey = unspecified descision</p>
       </div>
+
+    <div class="controls">
+
+      <div class="scale-selection">
+        <button class="button" onclick="updateScatterplotToAbsolute()">Absolute</button>
+        <button class="button" onclick="updateScatterplotToRelative()">Relative</button>
+      </div>
+
+      <div class="issue-selection">
+        <p>Issue Area</p>
+        <select id="issueSelect">
+          <optgroup label="Combined Issue Areas" id="combomenu">
+          <optgroup label="Individual Issue Areas" id="realmenu">
+        </select>
+      </div>
+
     </div>
-  <div>
-  </div>
-  <div class="interactivity">
-    <div class="buttons">
-      <button class="button" onclick="updateScatterplotToAbsolute()">Absolute</button>
-      <button class="button" onclick="updateScatterplotToRelative()">Relative</button>
+    
+    <div class="scatterplot">
+      <!-- js file will add the svg here -->
     </div>
-    <h3>Proposed interactivity:</h3>
-    <ul>
-      <li> Choose an individual issue are </li>
-      <li> See an individual justice's votes rather than, or versus, the court's decisions </li>
-    </ul>
+
   </div>
   <script type="text/javascript" src="./scatterplot.js"></script>
 </body>
