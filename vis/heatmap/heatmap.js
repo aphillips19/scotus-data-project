@@ -12,21 +12,34 @@ NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_LegalProvision.csv"
 
 //NS.datapath = "../../Data/SCDB_small.csv"
 
+
+//margins
 NS.margin = { top: 50, right: 0, bottom: 100, left: 100 },
 
+//width and height
 NS.width = 960 - NS.margin.left - NS.margin.right,
 NS.height = 2000 - NS.margin.top - NS.margin.bottom,
 
-NS.gridSize = Math.floor(NS.width / 40),
+
+//heatmap tile dimensions
+NS.gridSize = Math.floor(NS.width / 20),
 NS.gridHeight = Math.floor(NS.width / 40),
 
+
+//size for civil liberties view
+NS.civilgridSize = Math.floor(NS.width / 3),
+
+//size of legend
 NS.legendElementWidth = NS.gridSize*2,
 
+
+//color scale 
 NS.buckets = 9,
-
 NS.colors = ['#fa8072','#f49689','#ecaba1','#e2bfba','#d3d3d3','#bcc3da','#a3b3e1','#87a4e7','#6495ed']
-// https://gka.github.io/palettes/#colors=crimson,purple,steelblue|steps=9|bez=0|coL=0
+// https://gka.github.io/palettes/#colors=salmon,LightGrey,CornflowerBlue|steps=9|bez=0|coL=0
 
+
+//lists for labels
 NS.civil_list = ["Civil Liberty", "Other"]
 
 NS.issueAreas = [
@@ -49,6 +62,10 @@ NS.issueAreas = [
 
 //////////////////////////////////////////////////////////////////////
 // functions
+
+
+//This function does the hard work of formatting the data so that the different
+//graphs and views can properly process the data
 
 
 function aggregateData() {
@@ -139,23 +156,9 @@ function aggregateData() {
     })
   })
 
-  NS.civilLiberties = []
-  NS.otherGroup = []
 
 
-/*
-  NS.dataGood.forEach(function (d) {
-    if (d.issueArea >= 0 && d.issueArea <= 5) {
-        NS.civilLiberties.push(d);
-    }
-
-    else {
-      NS.otherGroup.push(d);
-    }
-
-  })
-*/
-
+  // add an object to data that the pie chart can handle
   NS.dataGood.forEach(function (d) {
     d["pieChartData"] = [{"label":"majority", "value":d.majority}, 
                          {"label":"minority", "value":d.minority}];
@@ -165,9 +168,10 @@ function aggregateData() {
   });
 
 
-
+//This will be the data that the civil liberties view uses
   NS.civilDataGood = [];
 
+  // for civil liberties view pie chart data 
   NS.majorityT = 0;
   NS.minorityT = 0;
 
@@ -187,12 +191,13 @@ function aggregateData() {
     //get values into seperate lists
     d.value.forEach(function (v) {
 
+      // we don't want missing data
       if(typeof v == 'undefined') {
         count++;
         return;
       }
 
-
+      //if it is a civil liberty
       if (count <= 5) {
         
         civil.push(v.direction);
@@ -200,6 +205,8 @@ function aggregateData() {
         minCountC += v.opinion.minority;
       }
 
+
+      // if it is not a civil liberty
       else {
         other.push(v.direction);
         majCountO += v.opinion.majority;
@@ -235,20 +242,20 @@ function aggregateData() {
 
     });
 
-    //console.log(civilTotal)
-    //console.log(other)
-
-
+    //finish computing averages for civil liberty tiles
     var civilVal = civilTotal / (civil.length);
     var otherVal = otherTotal / (other.length);
 
+    //add this data to civil liberty data set 
     NS.civilDataGood.push({ direction: civilVal, justiceName: justiceCount, typeNum: 0, pieList: [{"label":"majority", "value":majCountC}, {"label":"minority", "value":minCountC}]});
     NS.civilDataGood.push({ direction: otherVal, justiceName: justiceCount, typeNum: 1, pieList: [{"label":"majority", "value":majCountO}, {"label":"minority", "value":minCountO}]});
 
+    //for civil liberty pie charts
     NS.minorityT += minCountO;
     NS.minorityT += minCountC;
     NS.majorityT += majCountO;
     NS.majorityT += majCountC;
+
 
     justiceCount++;
 
@@ -258,7 +265,7 @@ function aggregateData() {
   });
 
 
-
+//data to initialize pie chart with totals 
 NS.pieInitdata = [{"label":"majority", "value":NS.majorityT}, 
                   {"label":"minority", "value":NS.minorityT}];
 
@@ -281,21 +288,25 @@ function main () {
           .attr("transform", "translate(" + NS.margin.left + "," + NS.margin.top + ")");
 
   
+  //initialize with regular heat map ciew
+  heatmap(svg);
 
-  heatmap_2(svg);
-
+  //initialize pie chart with totals 
   pieChart(NS.pieInitdata);
 }
 
 function heatmap(svg) {
-  console.log("here");
+
+  //define color scale
   colorScale = d3.scaleQuantile()
     .domain([1, 2])
     .range(NS.colors);
 
+  //define tiles with data
   cards = svg.selectAll(".issueArea")
       .data(NS.dataGood)
 
+  //create justice labels
   justiceLabels = svg.selectAll(".justiceLabel")
     .data(NS.justices)
     .enter().append("text")
@@ -306,21 +317,28 @@ function heatmap(svg) {
       .attr("transform", "translate(-6," + NS.gridHeight / 1.5 + ")")
       .attr("class", (d, i) => ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"));
 
+  //create issue area labels
   issueLabels = svg.selectAll(".issueLabel")
     .data(NS.issueAreas)
     .enter().append("text")
       .text(function (d) { return d; })
-      .attr("x", (d, i) => i * NS.gridSize)
+      .attr("x", 0)
       .attr("y", 0)
-      .attr("transform", "rotate(90)")
+      .attr("id", "issuelabs")
       .style("text-anchor", "middle")
       .style("font-size", "10px")
-      .attr("transform", "translate(" + NS.gridSize / 2 + ", -6)")
+      .attr("transform", function(d, i) {
+        return "translate(" + (i * NS.gridSize) + ",0)" + "translate(" + NS.gridSize / 2 + ", -25), rotate(-65)";
+      })
       .attr("class", (d, i) => ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"));
+
+
+
 
 
   cards.append("title");
 
+  //
   function filterColors(dir) {
     if(dir > 0)
       return colorScale(dir);
@@ -329,8 +347,7 @@ function heatmap(svg) {
   }
 
 
-
-
+  //create tiles
   cards.enter().append("rect")
       .attr("x", function(d) {
         return d.issueArea * NS.gridSize;
@@ -346,8 +363,11 @@ function heatmap(svg) {
       .style("fill", function(d) {
         return filterColors(d.direction);
       })
-      .on('mouseover', function (d) {update1(d.pieChartData)});
+      .on('mouseover', function (d) {update1(d.pieChartData)}); // on mouse over -> new pie chart
 
+
+
+      //create legend 
       legend = svg.selectAll(".legend")
           .data([0].concat(colorScale.quantiles()), (d) => d);
 
@@ -356,7 +376,7 @@ function heatmap(svg) {
 
       legend_g.append("rect")
         .attr("x", (d, i) => NS.legendElementWidth * i)
-        .attr("y", NS.height)
+        .attr("y", 800)
         .attr("width", NS.legendElementWidth)
         .attr("height", NS.gridHeight / 2)
         .style("fill", (d, i) => NS.colors[i]);
@@ -370,17 +390,17 @@ function heatmap(svg) {
 } // end heatmap
 
 function heatmap_2(svg) {
-  console.log("here");
+
+  //color scale
   colorScale = d3.scaleQuantile()
     .domain([1, 2])
     .range(NS.colors);
 
-
-
-
+  //define tiles with data
   cards = svg.selectAll(".typeNum")
       .data(NS.civilDataGood)
 
+  // create justice labels
   justiceLabels = svg.selectAll(".justiceLabel")
     .data(NS.justices)
     .enter().append("text")
@@ -391,15 +411,16 @@ function heatmap_2(svg) {
       .attr("transform", "translate(-6," + NS.gridHeight / 1.5 + ")")
       .attr("class", (d, i) => ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"));
 
+  //create civil liberty/other labels 
   issueLabels = svg.selectAll(".issueLabel")
     .data(NS.civil_list)
     .enter().append("text")
       .text(function (d) { return d; })
-      .attr("x", (d, i) => i * NS.gridSize)
+      .attr("x", (d, i) => i * NS.civilgridSize)
       .attr("y", 0)
       .style("text-anchor", "middle")
       .style("font-size", "12px")
-      .attr("transform", "translate(" + NS.gridSize / 2 + ", -6)")
+      .attr("transform", "translate(" + NS.civilgridSize / 2 + ", -6)")
       .attr("class", (d, i) => ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"));
 
 
@@ -412,13 +433,12 @@ function heatmap_2(svg) {
       return "#FFFFFF";
   }
 
-  console.log("got here!!")
 
-
+  //create tiles
   cards.enter().append("rect")
       .attr("x", function(d) {
       
-        return d.typeNum * NS.gridSize;
+        return d.typeNum * NS.civilgridSize;
       })
       .attr("y", function(d) {
         return d.justiceName * NS.gridHeight;
@@ -426,38 +446,36 @@ function heatmap_2(svg) {
       .attr("rx", 4)
       .attr("ry", 4)
       .attr("class", "issueArea bordered")
-      .attr("width", NS.gridSize)
+      .attr("width", NS.civilgridSize)
       .attr("height", NS.gridHeight)
       .style("fill", function(d) {
         return filterColors(d.direction);
       })
-      .on('mouseover', function (d) {update1(d.pieList)});
-      //.on('mouseout', tip.hide);
+      .on('mouseover', function (d) {update1(d.pieList)}); // pie chart on mouse over
 
-      console.log("Gothere22!!!")
 
-      /*
+      
+  //create legend 
+  legend = svg.selectAll(".legend")
+      .data([0].concat(colorScale.quantiles()), (d) => d)
 
-      legend = svg.selectAll(".legend")
-          .data([0].concat(colorScale.quantiles()), (d) => d);
+  legend_g = legend.enter().append("g")
+      .attr("class", "legend")
 
-      legend_g = legend.enter().append("g")
-          .attr("class", "legend");
+  legend_g.append("rect")
+    .attr("x", (d, i) => NS.legendElementWidth * i)
+    .attr("y", 800)
+    .attr("width", NS.legendElementWidth)
+    .attr("height", NS.gridHeight / 2)
+    .style("fill", (d, i) => NS.colors[i])
 
-      legend_g.append("rect")
-        .attr("x", (d, i) => NS.legendElementWidth * i)
-        .attr("y", NS.height)
-        .attr("width", NS.legendElementWidth)
-        .attr("height", NS.gridHeight / 2)
-        .style("fill", (d, i) => NS.colors[i]);
+  legend_g.append("text")
+    .attr("class", "mono")
+    .text((d) => "≥ " + Math.round(d))
+    .attr("x", (d, i) => NS.legendElementWidth * i)
+    .attr("y", NS.height + NS.gridHeight);
 
-      legend_g.append("text")
-        .attr("class", "mono")
-        .text((d) => "≥ " + Math.round(d))
-        .attr("x", (d, i) => NS.legendElementWidth * i)
-        .attr("y", NS.height + NS.gridHeight);
-
-      */
+      
 
 } // end heatmap
 
@@ -469,6 +487,7 @@ function removeHSVG() {
 } // end removeSVG
 
 
+// change view to civil liberties 
 function civilButton() {
   removeHSVG();
   // make SVG
@@ -483,16 +502,21 @@ function civilButton() {
 
 }
 
+//change view to original issue area view
 function regularButton() {
 
+  //remove old svg
   removeHSVG();
+
+  //create new one
   svg = d3.select("body").append("svg")
           .attr("width", NS.width + NS.margin.left + NS.margin.right)
           .attr("height", 900)          
           .attr("id", "heatmap")
           .append("g")
           .attr("transform", "translate(" + NS.margin.left + "," + NS.margin.top + ")");
-
+  
+  // create new heatmap
   heatmap(svg);
 
 }
@@ -556,6 +580,8 @@ function update1(data) {
 
   d3.select("#pieChart").remove();
 
+  var totalNum = data[0].value + data[1].value;
+
 
 
   var w = 300,                        //width
@@ -590,15 +616,16 @@ function update1(data) {
               .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
               .attr("d", arc);                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing functi  
       arcs.append("svg:text")                                     //add a label to each slice
-              .attr("transform", function(d) {                    //set the label's origin to the center of the arc
-              //we have to make sure to set these before calling arc.centroid
+              .attr("transform", function(d) {                    //set the label's origin to the center of the arc//we have to make sure to set these before calling arc.centroid
               d.innerRadius = 0;
               d.outerRadius = r;
               return "translate(" + arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
           })
           .attr("text-anchor", "middle")                          //center the text on it's origin
-          .text(function(d, i) { return data[i].label; });        //get the label from our original data array
-        
+          .text(function(d, i) { return data[i].label; })      //get the label from our original data array
+      arcs.append("svg:text")
+              .attr("text-anchor", "middle")
+              .text("Total: " + totalNum);
 
 
 }
