@@ -11,9 +11,9 @@ var NS = {}; // create namespace
 //NS.datapath = "../../Data/SCDB_small.csv"
   NS.datapath = "../../Data/SCDB_M_caseCentered.csv"
 
-NS.width = 800;      // of SVG
-NS.height = 400;     // of SVG
-NS.padding = 80;
+NS.width = 1000;      // of SVG
+NS.height = 600;     // of SVG
+NS.padding = 70;
 
 NS.selectedIssue = {type: "combos", index: 0};
 NS.scaleType = "absolute";
@@ -39,7 +39,7 @@ NS.issueAreas = {
     { name: "other",               index: 14  }
     ],
   combos: [
-    { name: "Total",               indices:  d3.range(0, 15) },
+    { name: "All",               indices:  d3.range(0, 15) },
     { name: "Civil Liberties",     indices: d3.range(0, 6)  },
     { name: "Non Civil Liberties", indices: d3.range(7, 15) }
   ]
@@ -60,7 +60,7 @@ function aggregateData() {
       
       var aggregates = {
         real: [],
-        combos: []
+        combos: []  
       };
       
       // set up aggregate information storage for both "real" issue areas and
@@ -128,7 +128,8 @@ function aggregateData() {
           res[c][i] = {
             year: +d.key,
             val: x[i][series],
-            percent: x[i][series]/x[i].n
+            percent: (x[i].n > 0) ? x[i][series]/x[i].n : 0 // don't divide by
+                                                            // zero
           };
         }
       }
@@ -171,10 +172,12 @@ function main () {
   //Define axes
   NS.xAxis = d3.axisBottom()
             .scale(NS.xScale)
+            .tickFormat(d3.format("d"));
 
   NS.yAxis = d3.axisLeft()
             .scale(NS.yScale)
-            .ticks(5);
+            .ticks(5)
+            .tickFormat(d3.format("d"));
 
   // add HTML elements
   addHTML();
@@ -196,15 +199,6 @@ function initialize() {
   });
 }
 
-
-function makeTitle() {
-    NS.svg.append("text")
-    .attr("x", NS.width / 2)
-    .attr("y", NS.padding / 2)
-    .attr("text-anchor", "middle")
-    .attr("class", "title")
-    .text("Court Decisions vs. Time");
-}
 
 function addHTML() {
   //document.write("<p>redraw data!</p>");
@@ -257,14 +251,19 @@ function updatePoints() {
       .attr("class", "point")
       .transition().duration(500)
       .attr("r", 4.5)
+      // hide if n = 0
+      .attr("visibility", function(d) {
+            })
+      // set the x position
       .attr("cx", function(d) {
         var x = +d[NS.selectedIssue.type][NS.selectedIssue.index].year;
         return NS.xScale(x);
       })
+      //set the y position
       .attr("cy", function(d) {
         var y = +d[NS.selectedIssue.type][NS.selectedIssue.index][val];
-        if(isNaN(NS.yScale(y))) return 0; // deal with NaN (occurs when n is 0)
-        else return NS.yScale(y);
+        console.log(y)
+        return NS.yScale(y);
       });
 }
 
@@ -298,8 +297,6 @@ function makeScatterplot () {
 
   console.log("make scatterplot");
 
-  // title
-  makeTitle();
 
   // Add circles
   NS.svg.selectAll(".series")
@@ -322,7 +319,19 @@ function makeScatterplot () {
         else return NS.yScale(y);
       });
 
- // add axis labels
+  //Create X axis
+  NS.svg.append("g")
+    .attr("class", "axis--x")
+    .attr("transform", "translate(0," + (NS.height - NS.padding) + ")")
+    .call(NS.xAxis);
+  
+  //Create Y axis
+  NS.svg.append("g")
+    .attr("class", "axis--y")
+    .attr("transform", "translate(" + NS.padding + ",0)")
+    .call(NS.yAxis);
+
+     // add axis labels
   NS.svg // xlabel
     .append("text")
     .attr("class", "xlabel")
@@ -331,11 +340,8 @@ function makeScatterplot () {
     .attr("transform", "translate(" + (NS.width - NS.padding) / 2 + "," +
            (NS.height - NS.padding/3 + ")"))
     // use xAttribute as the label
-    .text(function() {
-      var x = NS.issueAreas[NS.selectedIssue.type][NS.selectedIssue.index];
-      return x.name;
-    });
-
+    .text("Year");
+//NS.issueAreas[NS.selectedIssue.type][NS.selectedIssue.index];
   NS.svg // ylabel
     .append("text")
     .attr("class", "ylabel")
@@ -344,7 +350,9 @@ function makeScatterplot () {
     .attr("transform", "translate(" + NS.padding / 3 + ", " +
             (NS.height) / 2 + ") " + "rotate(-90)")
     // use yAttribute as the label
-    .text(NS.yAttribute);
+    .text(function(d) {
+      return (NS.scaleType == "absolute") ? "Number of Cases" : "Percent of Cases";
+    });
 }
 
 // create the SVG context and return it

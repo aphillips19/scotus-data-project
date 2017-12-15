@@ -25,31 +25,36 @@
     <div class=project-description>
       <div class="heading"> <h3>Scatterplot</h3></div>
       <div class="content">
-        <p>Shows the number of conservative/liberal/unspecifiable decisions per year (at the case level)</p>
-        <p>Blue = liberal decision, Red = conservative decision, Grey = unspecified descision</p>
+        <p> This visualization shows the number, or percentage, of liberal and
+            conservative decisions for a given year, in certain issue areas.
+        </p>
       </div>
 
     <div class="controls">
 
       <div class="scale-selection">
+        <p>Change scale:</p>
         <button class="button" onclick="updateScatterplotToAbsolute()">Absolute</button>
         <button class="button" onclick="updateScatterplotToRelative()">Relative</button>
       </div>
 
-      <div class="issue-selection">
-        <p>Issue Area</p>
-        <select id="issueSelect">
-          <optgroup label="Combined Issue Areas" id="combomenu">
-          <optgroup label="Individual Issue Areas" id="realmenu">
-        </select>
+    </div>
+
+    <div class="graph">
+      <div class="title">
+          <span>Conservative &amp; Liberal Decisions in </span>
+          <select id="issueSelect">
+            <optgroup label="Combined Issue Areas" id="combomenu"></optgroup>
+            <optgroup label="Individual Issue Areas" id="realmenu"></optgroup>
+          </select>
+          <br>
+          <span> Issue Area(s) vs. Time</span>
       </div>
-
+      
+      <div class="scatterplot">
+        <!-- js file will add the svg here -->
+      </div>
     </div>
-    
-    <div class="scatterplot">
-      <!-- js file will add the svg here -->
-    </div>
-
   </div>
   <script type="text/javascript" src="./scatterplot.js"></script>
 </body>

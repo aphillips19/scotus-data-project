@@ -3,7 +3,28 @@
   padding: 10px;
 }
 
+.scatterplot {
+    margin: 0 auto;
+}
 
+.controls {
+  width: 1000px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+.title {
+  width: 1000px;
+  text-align: center;
+}
+.title span {
+  font-size: 20px;
+}
+
+select {
+  width: auto;
+  text-align: center;
+  padding: 3px;
+}
 
 .tooltip { 
     position: absolute;     

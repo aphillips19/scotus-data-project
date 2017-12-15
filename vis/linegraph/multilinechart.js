@@ -16,21 +16,27 @@ var NS = {}; // create namespace
   NS.datapathCJ = "../../Data/chiefjustices.csv"
 
 
-// Get the mean voting data
-
+// This function counts the number of swing votes that are important: meaning,
+// instances where a justice is the median justice, the split of the vote was
+// 5-4, and they were in the majority (in other words, they were the deciding
+// vote)
 function countSwingVotes(v) {
-  var n = v.length;
-  var sum = 0;
-
-  for(var i = 0; i < n; i++) {
+  var sum = 0; // keep of the sum as we go
+  // iterate through each line of data
+  for(var i = 0; i < v.length; i++) {
     if( v[i].median == 1
         && v[i].majVotes == 5
         && v[i].majority == 1      )
+      // increment the sum when there is a swing vote
       sum++;
   }
   return sum;
 }
 
+// transform the justice-centered dataset into one nested by justice, then by
+// year. At each data point, store the mean decision direction, the total
+// number of votes in that year, whether or not a justice was the swing vote
+// in that year, and the number of important swing votes in that year.
 function aggregateData() {
   console.log("Performing data aggregation...")
   NS.dataNested = d3.nest()
@@ -67,6 +73,11 @@ function aggregateData() {
   NS.svg.select("text").remove();
   })
 
+
+// this commented code was the beginning the idea to allow multiple justices
+// to be selected at once in a number of pre-defined group. While this doesn't
+// add any new information, it would have made it easier to note certain trends
+
 /*
   // add groupings of justices that can all be selected at once
   NS.justiceGroups = {
@@ -80,18 +91,10 @@ function aggregateData() {
       }  
   }
   */
-/*
-  NS.justiceList = NS.dataNested.map(function(d) {
-    console.log(1);
-    return {key: d.key, value: false};
-  });
-  */
+
 }
 
-
-// Get the swing vote data
-// function getSwingVote() {}
-
+// Load the data, call main()
 function initialize() {
   // change SVG to reflect loading data
   NS.svg = d3.select("svg"); // select the SVG (will be often used later on)
@@ -114,6 +117,7 @@ function initialize() {
   });
 }
 
+
 /* Define the following global variables (NS. ...)
     width, height, x, y, z, xAxis, line, focus */
 function setupFocus() {
@@ -130,8 +134,9 @@ function setupFocus() {
   NS.xAxis = d3.axisBottom(NS.x)
              .tickFormat(d3.format(".0f"));
 
+
+  // create the line; each justice will have one
   NS.line = d3.line()
-    //.curve(d3.curveBasis)
     .x(function(d) {
       return NS.x(d.key);
     })
@@ -139,7 +144,7 @@ function setupFocus() {
       return NS.y(d.value.mean)
     });
 
-  // Store the focused area - the line graph
+  // Store the focused area (the line graph) in a global variable
   NS.focus = NS.svg.append("g")
     .attr("class", "focus")
     .attr("transform", "translate(" + NS.margin.left + "," + NS.margin.top + ")");
@@ -160,19 +165,19 @@ function setupContext() {
   NS.xAxis2 = d3.axisBottom(NS.x2)
              .tickFormat(d3.format(".0f"));
 
-  // NOTE: I can make it snap! https://github.com/d3/d3-brush
   // Add the brush
   NS.brush = d3.brushX()
     .extent([[0,0], [NS.width, NS.height2]])
     .on("brush end", brushed)
   
 
-  // Store the context - the timeline
+  // Store the context (the timeline) in a global variable
   NS.context = NS.svg.append("g")
     .attr("class", "context")
     .attr("transform", "translate(" + NS.margin2.left + "," + NS.margin2.top + ")");
 }
 
+// Create the entire graph; both the setup and context views
 function createGraph() {
   console.log("Creating the graph...")
 
@@ -189,6 +194,7 @@ function createGraph() {
   NS.x.domain(d3.extent(NS.dataset, function(d) {
     return +(d.term);
   }));
+  
   NS.y.domain([0, 1])
 
   NS.x2.domain(NS.x.domain())
@@ -214,10 +220,10 @@ function createGraph() {
       .attr("y", 6)
       .attr("dy", "0.71em")
       .attr("fill", "#000")
-      .text("Preference Value");
+      .text("Liberal");
 
   
-  // Create an object for each justice
+  // Create an element for each justice (the array of all of them is stored in NS.justice)
   NS.justice = NS.focus.selectAll(".justice")
     .data(NS.dataNested)
     .enter().append("g")
