@@ -95,11 +95,11 @@ function makeMenu() {
 
   // update graph when something is chosen
   startMenu.on("change", function() {
-    NS.startDate = this.value; // set the global value to the selected option
+    NS.startYear = this.value; // set the global value to the selected option
     updateChart(); // update the chart
   });
   endMenu.on("change", function() {
-    NS.endDate = this.value; // set the global value to the selected option
+    NS.endYear = this.value; // set the global value to the selected option
     updateChart(); // update the chart
   });
 
@@ -108,13 +108,15 @@ function makeMenu() {
 }
 
 function updateChart() {
-  console.log("will update");
+  console.log("updating to " + NS.startYear + "-" + NS.endYear);
+  d3.select(".piechart").remove()
+  makePieChart();
 }
 function makePieChart () {
 
   // get the data for the pie chart by passing this function an array of all
   // the years in the specified range (inclusive)
-  NS.piedata = aggregateByYear(d3.range(NS.startYear,NS.endYear + 1));
+  NS.piedata = aggregateByYear(d3.range(NS.startYear,(NS.endYear)));
 
   NS.piechart = NS.svg.append("g")
     .attr("transform", "translate(" + (NS.width - NS.radius) + "," + NS.height / 2 + ")")
@@ -122,7 +124,7 @@ function makePieChart () {
 
   NS.color = d3.scaleOrdinal()
     .domain(NS.directions)
-    .range(["#fa8072", "#d3d3d3", "#6495ed"])
+    .range(["#fa8072", "#6495ed", "#d3d3d3"])
   
   NS.pie = d3.pie()
     .sort(null)
