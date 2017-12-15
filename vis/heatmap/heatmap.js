@@ -17,15 +17,14 @@ NS.margin = { top: 50, right: 0, bottom: 100, left: 100 },
 NS.width = 960 - NS.margin.left - NS.margin.right,
 NS.height = 2000 - NS.margin.top - NS.margin.bottom,
 
-NS.gridSize = Math.floor(NS.width / 14),
+NS.gridSize = Math.floor(NS.width / 40),
 NS.gridHeight = Math.floor(NS.width / 40),
 
 NS.legendElementWidth = NS.gridSize*2,
 
 NS.buckets = 9,
 
-NS.colors = ['#dc143c','#c70a4e','#b2025f','#9b0070','#800080','#7a368d',
-            '#70539a','#616ba7','#4682b4']
+NS.colors = ['#fa8072','#f49689','#ecaba1','#e2bfba','#d3d3d3','#bcc3da','#a3b3e1','#87a4e7','#6495ed']
 // https://gka.github.io/palettes/#colors=crimson,purple,steelblue|steps=9|bez=0|coL=0
 
 NS.civil_list = ["Civil Liberty", "Other"]
@@ -313,6 +312,7 @@ function heatmap(svg) {
       .text(function (d) { return d; })
       .attr("x", (d, i) => i * NS.gridSize)
       .attr("y", 0)
+      .attr("transform", "rotate(90)")
       .style("text-anchor", "middle")
       .style("font-size", "10px")
       .attr("transform", "translate(" + NS.gridSize / 2 + ", -6)")
