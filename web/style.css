@@ -14,7 +14,6 @@ a {
 
 }
 
-
 #project-title {
   font-size: 30px;
 }
@@ -55,7 +54,7 @@ a {
 .column {
   float: left;
   margin: 8px;
-  width: 580px;
+  width: 380px;
   border: 2px lightgrey solid;
   background: #F7F7F7;
   height: 400px;
@@ -65,6 +64,24 @@ a {
   content: "";
   display: table;
   clear: both;
+}
+
+#link-scatterplot {
+  background-image: url("img/scatterplot.jpg");
+}
+#link-linegraph {
+  background-image: url("img/linegraph.jpg");
+}
+#link-heatmap {
+  background-image: url("img/heatmap.jpg");
+}
+
+.link-image {
+  padding: 0px 30px;
+  border-radius: 10px;
+  width: 300px;
+  height: 200px;
+  background-size: cover;
 }
 
 .visualization-links, .visualization {
