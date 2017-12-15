@@ -1,10 +1,6 @@
 // Namespace
 //
-//
-// tooltip/tutorial: https://introjs.com/
-//
-//
-//
+
 var NS = {}; // create namespace
 
   //NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_Legagraphion.csv"
@@ -177,20 +173,8 @@ function setupContext() {
     .attr("transform", "translate(" + NS.margin2.left + "," + NS.margin2.top + ")");
 }
 
-// Create the entire graph; both the setup and context views
-function createGraph() {
-  console.log("Creating the graph...")
-
-
-  // Set the margins for the focus and context views
-  NS.margin = {top: 20,   right: 80, bottom: 110, left: 40},
-  NS.margin2 = {top: 430, right: 80, bottom: 30,  left: 40};
-
-  setupFocus();
-
-  setupContext();
-
-  // Set domains
+function setupDomains() {
+    // Set domains
   NS.x.domain(d3.extent(NS.dataset, function(d) {
     return +(d.term);
   }));
@@ -201,9 +185,10 @@ function createGraph() {
   NS.y2.domain(NS.y.domain())
 
   NS.z.domain(NS.dataNested.map(function(c) { return c.key; }));
+}
 
-
-/* Add stuff to focused graph */
+function appendElementsToFocus() {
+  /* Add stuff to focused graph */
   NS.focus.append("g")
     // make the x axis
     .attr("class", "axis axis--x")
@@ -256,8 +241,10 @@ function createGraph() {
       })
       .text(function(d) { return d.justice; });
 
+}
 
-  /* End add stuff to focused graph */
+function appendElementsToContext() {
+
   /* Add stuff to context */
   NS.context.append("g")
     .attr("class", "axis axis--x")
@@ -298,6 +285,16 @@ function createGraph() {
     .attr("y", NS.height2/2 + 5)
     .text(function(d) {return d.chief; })
 
+  // add a label
+    NS.context.append("text")
+    .attr("class", "timeline-axis-label")
+    .style("fill", "#000")
+    .style("font", "10px sans-serif")
+    .attr("text-anchor", "middle")
+    .attr("x", NS.width/2)
+    .attr("y", NS.height2 + NS.margin2.bottom)
+    .text("Chief Justices (year)")
+
   // add the brush to the SVG
   NS.context.append("g")
     .attr("class", "brush")
@@ -307,6 +304,26 @@ function createGraph() {
   NS.context.select(".selection")
     .attr("rx", 7)
     .attr("ry", 7)
+}
+
+// Create the entire graph; both the setup and context views
+function createGraph() {
+  console.log("Creating the graph...")
+
+
+  // Set the margins for the focus and context views
+  NS.margin = {top: 20,   right: 80, bottom: 110, left: 40},
+  NS.margin2 = {top: 440, right: 80, bottom: 25,  left: 40};
+
+  setupFocus();
+
+  setupContext();
+
+  setupDomains(); 
+
+  appendElementsToFocus();
+
+  appendElementsToContext();
 
   // Create a box to clip paths so that lines don't go out of bounds
   NS.svg.append("defs").append("clipPath")
@@ -408,7 +425,6 @@ function eventListeners() {
     .on("mouseout", function() {
       pointMouseOut(this);
     })
-    .on("mousemove", mousemove)
 }
 
 function hideTooltip() {
@@ -430,12 +446,15 @@ function pointMouseOver(point) {
   updateTooltips(point)
 }
 
+
+
 function updateTooltips(point) {
   var pointSel = d3.select(point);
   // change the position of the tooltip to be just above the point; the
-  // "magic numbers" ensure it is centered and above the point
-  var x = +pointSel.attr("cx") + 55;
-  var y = +pointSel.attr("cy") + NS.height/2 - pointSel.attr("r") - 20;
+  // "magic numbers" ensure it is centered and above the point.
+  var x = d3.event.pageX - 80;
+  var y = d3.event.pageY - 60;
+
   d3.select(".tooltip")
     .style("display", "block")
     .style("left", x + "px")   
@@ -445,51 +464,15 @@ function updateTooltips(point) {
   // grab information about the point (which justice it corresponds to)
   // change information inside the tooltip
   var d = pointSel.datum()
-  d.percent = d3.format(".1f")(d.value.swingImportance / d.value.n)
+  d.percent = d3.format(".0%")(d.value.swingImportance / d.value.n)
   var content = ("In " + d.key + ", " + d.value.swingImportance + " out of "
-                + d.value.n + " (" + d.percent + "%) votes were in 5-4 decisions");
+                + d.value.n + " (" + d.percent + ") votes were in 5-4 decisions");
   document.getElementById("tooltip-text")
     .innerHTML = content;
 
 
 
 }
-
-
-/* // FOR LINES:
-function updateTooltip(pos, justice) {
-  var data = d3.select(justice).data()[0].values,
-      bisectDate = d3.bisector(function(d) { return +d.key }).left;
-  var x0 = NS.x.invert(pos[0]),  // get the year of the mouse pointer's location
-      i = bisectDate(data, x0)    // get the index of this year, rounded down
-      d0 = data[i - 1],
-      d1 = data[i],
-      d = 0;
-    if(typeof d1 == "undefined") d = d0; else if(typeof(d0) == "undefined") d = d1;
-    else
-      d = x0 - (+d0.year) > (+d1.year) - x0 ? d1 : d0;  // determine which year it is closest to
-
-  d3.select(".tooltip")
-    .style("display", "block")
-    .style("left", (NS.x(d.key)) + 10 + "px")   
-    .style("top", (d3.event.pageY - 28 - 50) + "px")
-    .html(function() {
-      var number = "n: " + d.value.n;
-      var mean = "value: " + d.value.mean;
-      var swing = "5-4 decisions: " + d.value.swingImportance;
-      var res = number + "<br>" + mean;
-      if(NS.showSwingVotes && d.value.swing == 1 )
-        res += "<br>" + d.value.swingImportance;
-      return res;
-    });
-
-}
-*/
-
-function mousemove() {
-  NS.mousePosition = d3.mouse(this);
-}
-
 
 
 function updateJusticePosition() {
@@ -728,7 +711,8 @@ function main() {
 
 /* Run the code */
 
-// https://github.com/wbkd/d3-extended
+// d3...moveToFront() taken from https://github.com/wbkd/d3-extended
+// used to ensure SVG elements are drawn in the foreground
 d3.selection.prototype.moveToFront = function() { 
   return this.each(function(){
     this.parentNode.appendChild(this);
