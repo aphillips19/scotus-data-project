@@ -1,10 +1,16 @@
 <!DOCTYPE html>
+<!--
+    SCOTUS Data Project
+    Line Chart Visualization
+    Andrew Phillips & Jake Rourke
+-->
+
 <html lang="en">
 
 <head>
-  <title>Line Chart Viz</title>
+  <title>Line Graph</title>
   <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="multilinechart.css">
+  <link rel="stylesheet" type="text/css" href="linechart.css">
   <link rel="stylesheet" type="text/css" href="../../web/navbar.css">
   <link rel="stylesheet" type="text/css" href="../../web/style.css">
 </head>
@@ -14,7 +20,7 @@
   <div class="navbar">
     <ul>
       <li><a href="../../web">Home</a></li>
-      <li><a href="#">Data Details</a></li>
+      <li><a href="../../web/in-depth.html">Data Details</a></li>
       <li><a class="active" href="#">Line Graph</a></li>
       <li><a href="../heatmap/heatmap.html">Heatmap</a></li>
       <li><a href="../scatterplot/scatterplot.html">Scatterplot</a></li>
@@ -23,12 +29,11 @@
 
   <div class="main">
     <div class=project-description>
-      <div class="heading"> <h3>Timeline Explorer</h3></div>
+      <div class="heading"> <h3>Multi-Series Line Chart & Brush/Zoom Timeline</h3></div>
       <div class="content">
         <p> Select a justice on the righthand side. Adjust the time scale on the bottom. </p>
         <p> When swing votes are toggled, the size of the circle represents the
-        number of 5-4 decisions in that year; in other words, the importance of
-        their swing vote</p>
+        number of 5-4 decisions in that year where the median justice was in the majority; in other words, the importance of their swing vote</p>
       </div>
     </div>
     <div class="visualization">
@@ -57,6 +62,6 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="./multilinechart.js"></script>
+  <script type="text/javascript" src="./linechart.js"></script>
 </body>
 </html>

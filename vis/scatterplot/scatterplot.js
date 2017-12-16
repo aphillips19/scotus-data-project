@@ -1,14 +1,14 @@
-/* Scatterplot prototype
- * Andrew Phillips & Jake Rourke
- * Nov 13, 2017 */
+/*
+    SCOTUS Data Project
+    Scatterplot Visualization
+    Andrew Phillips & Jake Rourke
+*/
 
-// Code adapted from my Lab 4 scatterplot
-
+// Code adapted in part from my Lab 4 scatterplot and
+// https://bl.ocks.org/mbostock/3183403
 
 var NS = {}; // create namespace
 
-//NS.datapath = "../../Data/SCDB_2017_01_justiceCentered_LegalProvision.csv"
-//NS.datapath = "../../Data/SCDB_small.csv"
   NS.datapath = "../../Data/SCDB_M_caseCentered.csv"
 
 NS.width = 1000;      // of SVG
@@ -92,7 +92,6 @@ function aggregateData() {
 
         // increment "real" issue area. No need to search for index, because
         // the index in the array represents the proper index
-        if(issueArea == 0) console.log("ZERO!")
         aggregates["real"][issueArea - 1][direction]++;
         aggregates["real"][issueArea - 1].n++;
 
@@ -168,7 +167,6 @@ function main () {
 
   NS.zScale = d3.scaleOrdinal(["red", "blue"]);
 
- 
   //Define axes
   NS.xAxis = d3.axisBottom()
             .scale(NS.xScale)
@@ -184,6 +182,9 @@ function main () {
 
   // make scatterplot
   makeScatterplot();
+
+  // make the legend
+  makeLegend();
 }
 
 
@@ -240,6 +241,12 @@ function updateScalesAndAxes(scale) {
   NS.svg.select(".axis--y")
     .call(NS.yAxis);
 
+  // Adjust y axis label
+  NS.svg.select(".ylabel")
+    .text(function(d) {
+      return (NS.scaleType == "absolute") ? "Number of Cases" : "Percent of Cases";
+    });
+
 }
 
 function updatePoints() {
@@ -262,7 +269,6 @@ function updatePoints() {
       //set the y position
       .attr("cy", function(d) {
         var y = +d[NS.selectedIssue.type][NS.selectedIssue.index][val];
-        console.log(y)
         return NS.yScale(y);
       });
 }
@@ -288,9 +294,6 @@ function makeMenu() {
     NS.selectedIssue.index = this.value.split(",")[1];
     updateScatterplot(); // update scatterplot
   });
-
-
-
 }
 
 function makeScatterplot () {
@@ -309,6 +312,8 @@ function makeScatterplot () {
     .enter().append("circle")
       .attr("class", "point")
       .attr("r", 4.5)
+      .attr("stroke", "black")
+      .attr("stroke-width", 1)
       .attr("cx", function(d) {
         var x = +d[NS.selectedIssue.type][NS.selectedIssue.index].year;
         return NS.xScale(x);
@@ -332,8 +337,7 @@ function makeScatterplot () {
     .call(NS.yAxis);
 
      // add axis labels
-  NS.svg // xlabel
-    .append("text")
+  NS.svg.append("text") // x label
     .attr("class", "xlabel")
     // center horizontally on the x axis
     .attr("text-anchor", "middle")
@@ -341,9 +345,7 @@ function makeScatterplot () {
            (NS.height - NS.padding/3 + ")"))
     // use xAttribute as the label
     .text("Year");
-//NS.issueAreas[NS.selectedIssue.type][NS.selectedIssue.index];
-  NS.svg // ylabel
-    .append("text")
+  NS.svg.append("text") // y label
     .attr("class", "ylabel")
     .attr("text-anchor", "middle")
     // center vertically on the y axis
@@ -365,6 +367,19 @@ function makeSVG () {
         .attr("height", NS.height);
 }
 
+function makeLegend() {
+  NS.svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", "translate(20,20)");
+
+  NS.legend = d3.legendColor()
+    .labels(["Conservative", "Liberal"])
+    .scale(NS.zScale);
+
+  NS.svg.select(".legend")
+    .call(NS.legend);
+
+}
 
 //////////////////////////////////////////////////////////////////////
 

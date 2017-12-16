@@ -1,5 +1,8 @@
-/* SCOTUS Data Project
- * Andrew Phillips */
+/*
+    SCOTUS Data Project
+    "At-A-Glance" pie chart on home page
+    Andrew Phillips & Jake Rourke
+*/
 
 //Some code adapted from https://bl.ocks.org/mbostock/1346410 - Pie Chart Update II
 
