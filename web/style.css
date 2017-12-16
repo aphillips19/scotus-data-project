@@ -34,7 +34,7 @@ a {
 }
 .heading h3 {
   padding: 10px;
-  width: 200px;
+  width: 300px;
 }
 
 .heading h2 {
@@ -131,4 +131,14 @@ select {
   display: inline-block;
 }
 
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
 
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(odd){background-color: #f2f2f2}
